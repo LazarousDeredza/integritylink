@@ -427,6 +427,8 @@ class AuthenticationRepository extends GetxController {
                     );
                   })
               .onError((error, stackTrace) => () {
+                    print("Auth login Error : " + error.toString());
+
                     Get.snackbar(
                       'Error',
                       error.toString(),
@@ -439,6 +441,8 @@ class AuthenticationRepository extends GetxController {
         }
       }
     } on FirebaseAuthException catch (e) {
+      print("Auth login Error : " + e.toString());
+
       Get.snackbar(
         'Error',
         e.message.toString(),
@@ -447,6 +451,8 @@ class AuthenticationRepository extends GetxController {
         colorText: Colors.red,
       );
     } catch (_) {
+      print("Auth login Error : " + _.toString());
+
       Get.snackbar(
         'Error',
         _.toString(),

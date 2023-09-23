@@ -4,7 +4,6 @@ import 'package:integritylink/src/features/core/screens/data_screen/data_list.da
 import 'package:integritylink/src/features/core/screens/group_chat/helper/helper_function.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 
-import '../institutional_group_chat/service/database_service.dart';
 
 class DataScreen extends StatefulWidget {
   const DataScreen({super.key});
