@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "252624721432",
+    "project_id": "integrity-link",
+    "storage_bucket": "integrity-link.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252624721432:android:1c5e2041886712164f156d",
+        "android_client_info": {
+          "package_name": "com.pamodzi.integritylink"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "252624721432-r1rnpdb8obtk4hro1srqko4qi9rbi94p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pamodzi.integritylink",
+            "certificate_hash": "665c32dc921fdab991f072bc3b07f4827f63c503"
+          }
+        },
+        {
+          "client_id": "252624721432-tdq84g5185ei0v79csv7gf4bc0tkd4bo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeBUAQFsCvQnm_Y9pKlQux6VuDyIGYJmk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "252624721432-tdq84g5185ei0v79csv7gf4bc0tkd4bo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "252624721432-887rtgbcgachb9tgbr2t5tednkf9r7mi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pamodzi.integritylink"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
