@@ -230,7 +230,7 @@ class AuthenticationRepository extends GetxController {
       "created_at": user.createdAt,
       "about": user.about,
       "is_online": user.isOnline,
-      "last_ctive": user.lastActive,
+      "last_active": user.lastActive,
       "push_token": user.pushToken,
     }).whenComplete(() async {
       print("User created successfully");
