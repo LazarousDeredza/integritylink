@@ -1,5 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:integritylink/firebase_options.dart';
 import 'package:integritylink/src/features/authentication/screens/splash_screen/splash_screen.dart';
+import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../constants/colors.dart';
@@ -71,8 +75,15 @@ class _OnBoardState extends State<OnBoard> {
           TextButton(
             onPressed: () {
               _storeOnboardInfo();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => SplashScreen()));
+              // Navigator.pushReplacement(context,
+              //     MaterialPageRoute(builder: (context) => SplashScreen()));
+              Firebase.initializeApp(
+                      options: DefaultFirebaseOptions.currentPlatform)
+                  .then((value) {
+                Get.put(AuthenticationRepository());
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => SplashScreen()));
+              });
             },
             child: Text(
               "Skip",
@@ -150,10 +161,15 @@ class _OnBoardState extends State<OnBoard> {
                       print(index);
                       if (index == screens.length - 1) {
                         await _storeOnboardInfo();
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SplashScreen()));
+                        // Navigator.pushReplacement(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => SplashScreen()));
+
+                        Firebase.initializeApp(
+                                options: DefaultFirebaseOptions.currentPlatform)
+                            .then(
+                                (value) => Get.put(AuthenticationRepository()));
                       }
 
                       _pageController.nextPage(

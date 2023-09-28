@@ -9,14 +9,14 @@ import '../../../controllers/signin_controller.dart';
 import '../../signup/signup_screen.dart';
 
 class LoginFooterWidget extends StatelessWidget {
-  const LoginFooterWidget({
+  LoginFooterWidget({
     super.key,
   });
 
+  var controller = Get.put(SignInController());
+
   @override
   Widget build(BuildContext context) {
-    var controller = Get.put(SignInController());
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

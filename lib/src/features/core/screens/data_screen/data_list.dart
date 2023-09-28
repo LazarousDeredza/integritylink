@@ -4,11 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:integritylink/src/features/core/screens/group_chat/widgets/widgets.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DataListScreen extends StatefulWidget {
-  const DataListScreen({Key? key, required this.reportType});
-  final String reportType;
+  const DataListScreen({Key? key, required this.dataType});
+  final String dataType;
 
   @override
   State<DataListScreen> createState() => _DataListScreenState();
@@ -17,13 +21,32 @@ class DataListScreen extends StatefulWidget {
 class _DataListScreenState extends State<DataListScreen> {
   String url = '';
 
-  String get reportType => widget.reportType;
+  String get typeOfDocument => widget.dataType;
 
   uploadDataToFirebase() async {
     //pick pdf file
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: [
+        'pdf',
+        'doc',
+        'docx',
+        'txt',
+        'png',
+        'jpg',
+        'jpeg',
+        'xls',
+        'xlsx',
+        'xlsm',
+        'xlsb',
+        'ppt',
+        'pptx',
+        'pptm',
+        'potx',
+        'csv',
+      ],
+      allowCompression: true,
+      dialogTitle: 'Select Document',
     );
 
 //show snackbar if no file is selected
@@ -41,36 +64,46 @@ class _DataListScreenState extends State<DataListScreen> {
     File pick = File(result.files.single.path.toString());
     var file = pick.readAsBytesSync();
     String fileName = pick.path.split('/').last;
+    String extension = pick.path.split('.').last;
+    String fileSize = (pick.lengthSync() / 1024 / 1024).toStringAsFixed(2);
 
     //uploading file to firebase storage
-    var pdfFile =
-        await FirebaseStorage.instance.ref().child(reportType).child(fileName);
+    var pdfFile = await FirebaseStorage.instance
+        .ref()
+        .child(typeOfDocument)
+        .child(fileName);
     UploadTask task = pdfFile.putData(file);
 
     TaskSnapshot snapshotTask = await task;
     url = await snapshotTask.ref.getDownloadURL();
 
     //uploading url to firebase firestore
-    await FirebaseFirestore.instance
-        .collection(reportType)
-        .add({'url': url, 'name': fileName}).whenComplete(() => () {
-              //snackbar
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text("File Uploaded"),
-              ));
-            });
+    await FirebaseFirestore.instance.collection(typeOfDocument).add({
+      'url': url,
+      'name': fileName,
+      'extension': extension.toLowerCase(),
+      'size': fileSize,
+    }).whenComplete(() => () {
+          //snackbar
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("File Uploaded"),
+          ));
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(typeOfDocument),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: uploadDataToFirebase,
         child: Icon(Icons.add),
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection(reportType).snapshots(),
+        stream:
+            FirebaseFirestore.instance.collection(typeOfDocument).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
@@ -80,35 +113,197 @@ class _DataListScreenState extends State<DataListScreen> {
 
                   return InkWell(
                     onTap: () {
-                      Navigator.push(
+                      if (x['extension'] == 'pdf') {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => PdfViewer(
+                                      url: x['url'],
+                                    )));
+                      } else {
+                        showSnackbar(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => PdfViewer(
-                                    url: x['url'],
-                                  )));
+                          Colors.greenAccent,
+                          "Loading File\nPlease Wait ...",
+                        );
+
+                        FirebaseStorage.instance
+                            .refFromURL(x['url'])
+                            .getData()
+                            .then((value) async {
+                          final directory = await getExternalStorageDirectory();
+
+                          final downloadsPath = '${directory!.path}/Download';
+                          final filePath = '$downloadsPath/${x['name']}';
+
+                          if (!await Directory(downloadsPath).exists()) {
+                            await Directory(downloadsPath)
+                                .create(recursive: true);
+                          }
+
+                          File file = File(filePath);
+
+                          _saveFile2(file, value!);
+                        });
+                      }
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 10.0),
                       child: Row(
                         children: [
-                          //pdf image
+                          // image depending on extension
                           Container(
-                            height: 70.0,
-                            width: 70.0,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('assets/images/pdf.png'),
-                                fit: BoxFit.cover,
-                              ),
+                            margin: EdgeInsets.symmetric(horizontal: 10.0),
+                            child: x['extension'] == 'pdf' ||
+                                    x['extension'] == 'PDF' ||
+                                    x['extension'] == 'Pdf' ||
+                                    x['extension'] == 'pDF'
+                                ? Image.asset(
+                                    'assets/images/file_icons/pdf.png',
+                                    height: 30.0,
+                                    width: 30.0,
+                                  )
+                                : x['extension'] == 'docx' ||
+                                        x['extension'] == 'doc'
+                                    ? Image.asset(
+                                        'assets/images/file_icons/docx.png',
+                                        height: 30.0,
+                                        width: 30.0,
+                                      )
+                                    : x['extension'] == 'png' ||
+                                            x['extension'] == 'jpg' ||
+                                            x['extension'] == 'jpeg'
+                                        ? Image.asset(
+                                            'assets/images/file_icons/image.png',
+                                            height: 30.0,
+                                            width: 30.0,
+                                          )
+                                        : x['extension'] == 'xlsx' ||
+                                                x['extension'] == 'xls' ||
+                                                x['extension'] == 'xlsm' ||
+                                                x['extension'] == 'xlsb'
+                                            ? Image.asset(
+                                                'assets/images/file_icons/excel.png',
+                                                height: 30.0,
+                                                width: 30.0,
+                                              )
+                                            : x['extension'] == 'csv' ||
+                                                    x['extension'] == 'txt'
+                                                ? Image.asset(
+                                                    'assets/images/file_icons/text.png',
+                                                    height: 30.0,
+                                                    width: 30.0,
+                                                  )
+                                                : x['extension'] == 'ppt' ||
+                                                        x['extension'] ==
+                                                            'pptx' ||
+                                                        x['extension'] ==
+                                                            'pptm' ||
+                                                        x['extension'] == 'potx'
+                                                    ? Image.asset(
+                                                        'assets/images/file_icons/ppt.png',
+                                                        height: 30.0,
+                                                        width: 30.0,
+                                                      )
+                                                    : Image.asset(
+                                                        'assets/images/file_icons/file.png',
+                                                        height: 30.0,
+                                                        width: 30.0,
+                                                      ),
+                          ),
+
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Container(
+                                  margin:
+                                      EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: Text(
+                                    x['name'],
+                                    style: TextStyle(fontSize: 17.0),
+                                  ),
+                                ),
+                                Container(
+                                  margin:
+                                      EdgeInsets.symmetric(horizontal: 10.0),
+                                  child: Text(
+                                    x['size'] + ' MB',
+                                    style: TextStyle(fontSize: 12.0),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 10.0),
-                              child: Text(
-                                x['name'],
-                                style: TextStyle(fontSize: 17.0),
-                              ),
+                          //download icon
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10.0),
+                            child: IconButton(
+                              onPressed: () {
+                                //download file
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text("Downloading File"),
+                                ));
+                                // ...
+
+// ...
+
+// ...
+
+                                FirebaseStorage.instance
+                                    .refFromURL(x['url'])
+                                    .getData()
+                                    .then((value) async {
+                                  final directory =
+                                      await getExternalStorageDirectory();
+
+                                  final downloadsPath =
+                                      '${directory!.path}/Download';
+                                  final filePath =
+                                      '$downloadsPath/${x['name']}';
+
+                                  if (!await Directory(downloadsPath)
+                                      .exists()) {
+                                    await Directory(downloadsPath)
+                                        .create(recursive: true);
+                                  }
+
+                                  File file = File(filePath);
+
+                                  if (await file.exists()) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text('File Exists'),
+                                          content: Text(
+                                              'The file already exists. Do you want to overwrite it?'),
+                                          actions: [
+                                            TextButton(
+                                              child: Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text('Overwrite'),
+                                              onPressed: () {
+                                                _saveFile(file, value!);
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    _saveFile(file, value!);
+                                  }
+                                });
+
+// ...
+                              },
+                              icon: Icon(Icons.download),
                             ),
                           ),
                         ],
@@ -126,6 +321,81 @@ class _DataListScreenState extends State<DataListScreen> {
         },
       ),
     );
+  }
+
+// Function to launch the file using url_launcher
+  void _launchFile(String filePath) async {
+    if (await canLaunch(filePath)) {
+      await launch(filePath);
+    } else {
+      throw 'Could not launch $filePath';
+    }
+  }
+
+// Function to save the file using path_provider
+
+  void _saveFile(File file, List<int> value) async {
+    await file.writeAsBytes(value);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('File Downloaded'),
+          content: Text('Do you want to open the file?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Open File'),
+              onPressed: () {
+                OpenFile.open(file.path);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _saveFile2(File file, List<int> value) async {
+    await file.writeAsBytes(value);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('File Loaded'),
+          content: Text('Do you want to open the file?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Open File'),
+              onPressed: () {
+                OpenFile.open(file.path);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Function to open the file using open_file package
+  void _openFile(String filePath) async {
+    final result = await OpenFile.open(filePath);
+    print(result.message);
   }
 }
 
