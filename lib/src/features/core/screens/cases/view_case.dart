@@ -500,290 +500,266 @@ class _ViewCaseScreenState extends State<ViewCaseScreen> {
                         physics: BouncingScrollPhysics(),
                         itemCount: comments.length,
                         itemBuilder: (context, index) {
-                          return Column(children: [
-                            ListTile(
-                              leading:
-                                  //user profile icon
-                                  CircleAvatar(
-                                backgroundColor: Colors.grey,
-                                child: Icon(
-                                  Icons.person,
-                                  color: Colors.white,
+                          return Padding(
+                            padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                            child: Column(children: [
+                              ListTile(
+                                leading:
+                                    //user profile icon
+                                    CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  child: Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                              title: Padding(
-                                padding:
-                                    EdgeInsets.only(left: 15.0, right: 10.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(comments[index]['comment']),
-                                    SizedBox(height: 5.0),
-                                    Row(
-                                      children: [
-                                        //like icon
-                                        GestureDetector(
-                                          onTap: () {
-                                            //update the likes field in firebase
+                                title: Padding(
+                                  padding:
+                                      EdgeInsets.only(left: 15.0, right: 10.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 8.0),
+                                        child: Text(comments[index]['comment']),
+                                      ),
+                                      SizedBox(height: 5.0),
+                                      Row(
+                                        children: [
+                                          //like icon
+                                          GestureDetector(
+                                            onTap: () {
+                                              //update the likes field in firebase
 
-                                            LikeAndDislike likeAndDilike =
-                                                LikeAndDislike(
-                                                    caseID: widget.caseId,
-                                                    userID: userId,
-                                                    date: DateTime.now()
-                                                        .toString());
+                                              LikeAndDislike likeAndDilike =
+                                                  LikeAndDislike(
+                                                      caseID: widget.caseId,
+                                                      userID: userId,
+                                                      date: DateTime.now()
+                                                          .toString());
 
-                                            //check if the user has already liked the comment
-                                            FirebaseFirestore.instance
-                                                .collection('comments')
-                                                .doc(comments[index].id)
-                                                .collection('likes')
-                                                .where('userID',
-                                                    isEqualTo: userId)
-                                                .get()
-                                                .then((value) => {
-                                                      if (value.docs.isEmpty)
-                                                        {
-//check if i had disliked the comment before and remove it ,and deduct the number of dislikes by 1
-                                                          FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'comments')
-                                                              .doc(comments[
-                                                                      index]
-                                                                  .id)
-                                                              .collection(
-                                                                  'dislikes')
-                                                              .where('userID',
-                                                                  isEqualTo:
-                                                                      userId)
-                                                              .get()
-                                                              .then((value) => {
-                                                                    if (value
-                                                                        .docs
-                                                                        .isNotEmpty)
-                                                                      {
-                                                                        //remove the user from the dislikes collection
-                                                                        FirebaseFirestore
-                                                                            .instance
-                                                                            .collection(
-                                                                                'comments')
-                                                                            .doc(comments[index]
-                                                                                .id)
-                                                                            .collection(
-                                                                                'dislikes')
-                                                                            .doc(value
-                                                                                .docs.first.id)
-                                                                            .delete()
-                                                                            .then((value) =>
-                                                                                {
-                                                                                  //update the dislikes field in the comments collection
-                                                                                  FirebaseFirestore.instance.collection('comments').doc(comments[index].id).update({
-                                                                                    'numberOfDislikes': comments[index]['numberOfDislikes'] - 1
-                                                                                  })
-                                                                                })
-                                                                      }
-                                                                  }),
-
-                                                          //add the user to the likes collection
-                                                          FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'comments')
-                                                              .doc(comments[
-                                                                      index]
-                                                                  .id)
-                                                              .collection(
-                                                                  'likes')
-                                                              .add(likeAndDilike
-                                                                  .toJson())
-                                                              .then((value) => {
-                                                                    //update the likes field in the comments collection
-                                                                    FirebaseFirestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            'comments')
-                                                                        .doc(comments[index]
-                                                                            .id)
-                                                                        .update({
-                                                                      'numberOfLikes':
-                                                                          comments[index]['numberOfLikes'] +
-                                                                              1
-                                                                    }).then((value) =>
+                                              //check if the user has already liked the comment
+                                              FirebaseFirestore.instance
+                                                  .collection('comments')
+                                                  .doc(comments[index].id)
+                                                  .collection('likes')
+                                                  .where('userID',
+                                                      isEqualTo: userId)
+                                                  .get()
+                                                  .then((value) => {
+                                                        if (value.docs.isEmpty)
+                                                          {
+                                                            //check if i had disliked the comment before and remove it ,and deduct the number of dislikes by 1
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'comments')
+                                                                .doc(comments[
+                                                                        index]
+                                                                    .id)
+                                                                .collection(
+                                                                    'dislikes')
+                                                                .where('userID',
+                                                                    isEqualTo:
+                                                                        userId)
+                                                                .get()
+                                                                .then(
+                                                                    (value) => {
+                                                                          if (value
+                                                                              .docs
+                                                                              .isNotEmpty)
                                                                             {
-                                                                              //toast message
-                                                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                                                SnackBar(
-                                                                                  content: Text('Comment liked successfully'),
+                                                                              //remove the user from the dislikes collection
+                                                                              FirebaseFirestore.instance.collection('comments').doc(comments[index].id).collection('dislikes').doc(value.docs.first.id).delete().then((value) => {
+                                                                                    //update the dislikes field in the comments collection
+                                                                                    FirebaseFirestore.instance.collection('comments').doc(comments[index].id).update({
+                                                                                      'numberOfDislikes': comments[index]['numberOfDislikes'] - 1
+                                                                                    })
+                                                                                  })
+                                                                            }
+                                                                        }),
+
+                                                            //add the user to the likes collection
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'comments')
+                                                                .doc(
+                                                                    comments[
+                                                                            index]
+                                                                        .id)
+                                                                .collection(
+                                                                    'likes')
+                                                                .add(likeAndDilike
+                                                                    .toJson())
+                                                                .then(
+                                                                    (value) => {
+                                                                          //update the likes field in the comments collection
+                                                                          FirebaseFirestore.instance.collection('comments').doc(comments[index].id).update({
+                                                                            'numberOfLikes':
+                                                                                comments[index]['numberOfLikes'] + 1
+                                                                          }).then((value) =>
+                                                                              {
+                                                                                //toast message
+                                                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                                                  SnackBar(
+                                                                                    content: Text('Comment liked successfully'),
+                                                                                  ),
                                                                                 ),
-                                                                              ),
-                                                                            })
-                                                                  })
-                                                        }
-                                                      else
-                                                        {
-                                                          //toast message
-                                                          ScaffoldMessenger.of(
-                                                                  context)
-                                                              .showSnackBar(
-                                                            SnackBar(
-                                                              content: Text(
-                                                                  'You have already liked this comment'),
+                                                                              })
+                                                                        })
+                                                          }
+                                                        else
+                                                          {
+                                                            //toast message
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                    'You have already liked this comment'),
+                                                              ),
                                                             ),
-                                                          ),
-                                                        }
-                                                    });
-                                          },
-                                          child: Icon(
-                                            Icons.thumb_up,
-                                            color: Colors.blueAccent,
+                                                          }
+                                                      });
+                                            },
+                                            child: Icon(
+                                              Icons.thumb_up,
+                                              color: Colors.blueAccent,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(width: 5.0),
-                                        Padding(
+                                          SizedBox(width: 5.0),
+                                          Padding(
+                                              padding: EdgeInsets.all(6.0),
+                                              child: Text(
+                                                  '${comments[index]['numberOfLikes']}')),
+                                          SizedBox(width: 40.0),
+                                          //dislike icon
+                                          GestureDetector(
+                                            onTap: () {
+                                              //update the likes field in firebase
+
+                                              LikeAndDislike likeAndDilike =
+                                                  LikeAndDislike(
+                                                      caseID: widget.caseId,
+                                                      userID: userId,
+                                                      date: DateTime.now()
+                                                          .toString());
+
+                                              //check if the user has already disliked the comment
+                                              FirebaseFirestore.instance
+                                                  .collection('comments')
+                                                  .doc(comments[index].id)
+                                                  .collection('dislikes')
+                                                  .where('userID',
+                                                      isEqualTo: userId)
+                                                  .get()
+                                                  .then((value) => {
+                                                        if (value.docs.isEmpty)
+                                                          {
+                                                            //check if i had liked the comment before and remove it ,and deduct the number of likes by 1
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'comments')
+                                                                .doc(comments[
+                                                                        index]
+                                                                    .id)
+                                                                .collection(
+                                                                    'likes')
+                                                                .where('userID',
+                                                                    isEqualTo:
+                                                                        userId)
+                                                                .get()
+                                                                .then(
+                                                                    (value) => {
+                                                                          if (value
+                                                                              .docs
+                                                                              .isNotEmpty)
+                                                                            {
+                                                                              //remove the user from the likes collection
+                                                                              FirebaseFirestore.instance.collection('comments').doc(comments[index].id).collection('likes').doc(value.docs.first.id).delete().then((value) => {
+                                                                                    //update the likes field in the comments collection
+                                                                                    FirebaseFirestore.instance.collection('comments').doc(comments[index].id).update({
+                                                                                      'numberOfLikes': comments[index]['numberOfLikes'] - 1
+                                                                                    })
+                                                                                  })
+                                                                            }
+                                                                        }),
+
+                                                            //add the user to the dislikes collection
+                                                            FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'comments')
+                                                                .doc(
+                                                                    comments[
+                                                                            index]
+                                                                        .id)
+                                                                .collection(
+                                                                    'dislikes')
+                                                                .add(likeAndDilike
+                                                                    .toJson())
+                                                                .then(
+                                                                    (value) => {
+                                                                          //update the dislikes field in the comments collection
+                                                                          FirebaseFirestore.instance.collection('comments').doc(comments[index].id).update({
+                                                                            'numberOfDislikes':
+                                                                                comments[index]['numberOfDislikes'] + 1
+                                                                          }).then((value) =>
+                                                                              {
+                                                                                //toast message
+                                                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                                                  SnackBar(
+                                                                                    content: Text('Comment disliked successfully'),
+                                                                                  ),
+                                                                                ),
+                                                                              })
+                                                                        })
+                                                          }
+                                                        else
+                                                          {
+                                                            //toast message
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                    'You have already disliked this comment'),
+                                                              ),
+                                                            ),
+                                                          }
+                                                      });
+                                            },
+                                            child: Icon(
+                                              Icons.thumb_down,
+                                              color: Colors.redAccent,
+                                            ),
+                                          ),
+                                          SizedBox(width: 5.0),
+                                          Padding(
                                             padding: EdgeInsets.all(6.0),
                                             child: Text(
-                                                '${comments[index]['numberOfLikes']}')),
-                                        SizedBox(width: 40.0),
-                                        //dislike icon
-                                        GestureDetector(
-                                          onTap: () {
-                                            //update the likes field in firebase
-
-                                            LikeAndDislike likeAndDilike =
-                                                LikeAndDislike(
-                                                    caseID: widget.caseId,
-                                                    userID: userId,
-                                                    date: DateTime.now()
-                                                        .toString());
-
-                                            //check if the user has already disliked the comment
-                                            FirebaseFirestore.instance
-                                                .collection('comments')
-                                                .doc(comments[index].id)
-                                                .collection('dislikes')
-                                                .where('userID',
-                                                    isEqualTo: userId)
-                                                .get()
-                                                .then((value) => {
-                                                      if (value.docs.isEmpty)
-                                                        {
-                                                          //check if i had liked the comment before and remove it ,and deduct the number of likes by 1
-                                                          FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'comments')
-                                                              .doc(comments[
-                                                                      index]
-                                                                  .id)
-                                                              .collection(
-                                                                  'likes')
-                                                              .where('userID',
-                                                                  isEqualTo:
-                                                                      userId)
-                                                              .get()
-                                                              .then((value) => {
-                                                                    if (value
-                                                                        .docs
-                                                                        .isNotEmpty)
-                                                                      {
-                                                                        //remove the user from the likes collection
-                                                                        FirebaseFirestore
-                                                                            .instance
-                                                                            .collection(
-                                                                                'comments')
-                                                                            .doc(comments[index]
-                                                                                .id)
-                                                                            .collection(
-                                                                                'likes')
-                                                                            .doc(value
-                                                                                .docs.first.id)
-                                                                            .delete()
-                                                                            .then((value) =>
-                                                                                {
-                                                                                  //update the likes field in the comments collection
-                                                                                  FirebaseFirestore.instance.collection('comments').doc(comments[index].id).update({
-                                                                                    'numberOfLikes': comments[index]['numberOfLikes'] - 1
-                                                                                  })
-                                                                                })
-                                                                      }
-                                                                  }),
-
-                                                          //add the user to the dislikes collection
-                                                          FirebaseFirestore
-                                                              .instance
-                                                              .collection(
-                                                                  'comments')
-                                                              .doc(comments[
-                                                                      index]
-                                                                  .id)
-                                                              .collection(
-                                                                  'dislikes')
-                                                              .add(likeAndDilike
-                                                                  .toJson())
-                                                              .then((value) => {
-                                                                    //update the dislikes field in the comments collection
-                                                                    FirebaseFirestore
-                                                                        .instance
-                                                                        .collection(
-                                                                            'comments')
-                                                                        .doc(comments[index]
-                                                                            .id)
-                                                                        .update({
-                                                                      'numberOfDislikes':
-                                                                          comments[index]['numberOfDislikes'] +
-                                                                              1
-                                                                    }).then((value) =>
-                                                                            {
-                                                                              //toast message
-                                                                              ScaffoldMessenger.of(context).showSnackBar(
-                                                                                SnackBar(
-                                                                                  content: Text('Comment disliked successfully'),
-                                                                                ),
-                                                                              ),
-                                                                            })
-                                                                  })
-                                                        }
-                                                      else
-                                                        {
-                                                          //toast message
-                                                          ScaffoldMessenger.of(
-                                                                  context)
-                                                              .showSnackBar(
-                                                            SnackBar(
-                                                              content: Text(
-                                                                  'You have already disliked this comment'),
-                                                            ),
-                                                          ),
-                                                        }
-                                                    });
-                                          },
-                                          child: Icon(
-                                            Icons.thumb_down,
-                                            color: Colors.redAccent,
+                                              '${comments[index]['numberOfDislikes']}',
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(width: 5.0),
-                                        Padding(
-                                          padding: EdgeInsets.all(6.0),
-                                          child: Text(
-                                            '${comments[index]['numberOfDislikes']}',
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 20.0, right: 20.0),
-                              child: Divider(
-                                thickness: 2.0,
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(left: 20.0, right: 20.0),
+                                child: Divider(
+                                  thickness: 2.0,
+                                ),
                               ),
-                            ),
-                          ]);
+                            ]),
+                          );
                         },
                       );
                     },
