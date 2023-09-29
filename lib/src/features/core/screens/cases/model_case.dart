@@ -138,8 +138,7 @@ class Comment {
   final String? comment;
   final int? numberOfLikes;
   final int? numberOfDislikes;
-  final List<LikeAndDislike>? likes;
-  final List<LikeAndDislike>? dislikes;
+
   final String? approved;
   final String? date;
   final String? caseID;
@@ -150,8 +149,6 @@ class Comment {
       this.comment,
       this.numberOfLikes,
       this.numberOfDislikes,
-      this.likes,
-      this.dislikes,
       this.approved,
       this.date,
       this.caseID,
@@ -163,8 +160,6 @@ class Comment {
         'comment': comment,
         'numberOfLikes': numberOfLikes,
         'numberOfDislikes': numberOfDislikes,
-        'likes': likes,
-        'dislikes': dislikes,
         'approved': approved,
         'date': date,
         'caseID': caseID,
@@ -177,8 +172,6 @@ class Comment {
         comment: json['comment'],
         numberOfLikes: json['numberOfLikes'],
         numberOfDislikes: json['numberOfDislikes'],
-        likes: json['likes'],
-        dislikes: json['dislikes'],
         approved: json['approved'],
         date: json['date'],
         caseID: json['caseID'],
@@ -193,8 +186,6 @@ class Comment {
       comment: data['comment'],
       numberOfLikes: data['numberOfLikes'],
       numberOfDislikes: data['numberOfDislikes'],
-      likes: data['likes'],
-      dislikes: data['dislikes'],
       approved: data['approved'],
       date: data['date'],
       caseID: data['caseID'],

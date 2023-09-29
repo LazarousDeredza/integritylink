@@ -30,10 +30,11 @@ class _ViewCaseScreenState extends State<ViewCaseScreen> {
     userId = FirebaseAuth.instance.currentUser!.uid;
   }
 
+  final _commentController = TextEditingController();
+  bool isSaving = false;
+
   @override
   Widget build(BuildContext context) {
-    final _commentController = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         title: Text('View Case'),
@@ -431,47 +432,13 @@ class _ViewCaseScreenState extends State<ViewCaseScreen> {
                         ),
                         SizedBox(width: 8.0),
                         ElevatedButton(
-                          onPressed: () {
-                            //submit comment to firebase
+                          onPressed: isSaving
+                              ? () {
+                                  print("is saving");
+                                }
+                              : submitComment,
+                          //submit comment to firebase
 
-                            Comment comment = Comment(
-                                comment: _commentController.text,
-                                caseID: widget.caseId,
-                                userID: userId,
-                                date: DateTime.now().toString(),
-                                likes: [],
-                                dislikes: [],
-                                numberOfDislikes: 0,
-                                numberOfLikes: 0,
-                                approved: "No");
-
-                            FirebaseFirestore.instance
-                                .collection('comments')
-                                .add(comment.toJson())
-                                .then((value) => {
-                                      //clear the text field
-                                      _commentController.clear(),
-                                      //toast message
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                              'Comment added successfully'),
-                                        ),
-                                      ),
-
-                                      //show a list of comments
-
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ViewCaseScreen(
-                                            caseId: widget.caseId,
-                                          ),
-                                        ),
-                                      )
-                                    });
-                          },
                           child: Text('Submit'),
                         ),
                       ],
@@ -771,5 +738,59 @@ class _ViewCaseScreenState extends State<ViewCaseScreen> {
         },
       ),
     );
+  }
+
+  void submitComment() {
+    //only save if the comment is not empty
+    if (_commentController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Comment cannot be empty'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isSaving = true;
+    });
+
+    Comment comment = Comment(
+        comment: _commentController.text,
+        caseID: widget.caseId,
+        userID: userId,
+        date: DateTime.now().toString(),
+        numberOfDislikes: 0,
+        numberOfLikes: 0,
+        approved: "No");
+
+    FirebaseFirestore.instance
+        .collection('comments')
+        .add(comment.toJson())
+        .then((value) => {
+              //clear the text field
+              _commentController.clear(),
+              //toast message
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Comment added successfully'),
+                ),
+              ),
+
+              setState(() {
+                isSaving = false;
+              }),
+
+              //show a list of comments
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ViewCaseScreen(
+                    caseId: widget.caseId,
+                  ),
+                ),
+              )
+            });
   }
 }

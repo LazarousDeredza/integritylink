@@ -5,6 +5,7 @@ import 'package:integritylink/src/constants/image_strings.dart';
 import 'package:integritylink/src/constants/sizes.dart';
 import 'package:integritylink/src/constants/text_strings.dart';
 import 'package:integritylink/src/features/core/screens/about/about_screen.dart';
+import 'package:integritylink/src/features/core/screens/cases/admin/admin_cases_list.dart';
 import 'package:integritylink/src/features/core/screens/institutions/Institutions_list_home.dart';
 import 'package:integritylink/src/features/core/screens/profile/update_profile.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
@@ -139,11 +140,7 @@ class SettingsScreen extends StatelessWidget {
                 const Divider(),
                 const SizedBox(height: 8),
                 //menu
-                ProfileMenuWidget(
-                  title: tMenu1,
-                  icon: LineAwesomeIcons.cog,
-                  onPress: () {},
-                ),
+
                 ProfileMenuWidget(
                   title: tMenu2,
                   icon: LineAwesomeIcons.info,
@@ -159,6 +156,16 @@ class SettingsScreen extends StatelessWidget {
                 Center(
                   child: Text("Adminstrative"),
                 ),
+                ProfileMenuWidget(
+                  title: "Notifications",
+                  icon: LineAwesomeIcons.bell,
+                  onPress: () {
+                    Get.to(
+                      () => AdminCaseListScreen(),
+                    );
+                  },
+                ),
+
                 ProfileMenuWidget(
                   title: "Institutions",
                   icon: LineAwesomeIcons.school,
