@@ -15,6 +15,7 @@ class CaseModel {
   final String additionalWitnesses;
   final String? reportedBy;
   final List<String>? evidenceUrl;
+  final List<Comment>? comments;
   final String? caseID;
   final String? status;
   final String? howItWasResolved;
@@ -22,6 +23,7 @@ class CaseModel {
   final String reportingOutcome;
   final String resolutionDetails;
   final List<String> selectedOffences; // Adding the selected offences list
+  final String? witnesses;
 
   CaseModel(
       {this.id,
@@ -30,6 +32,8 @@ class CaseModel {
       this.howItWasResolved,
       this.caseID,
       this.reportedBy,
+      this.witnesses,
+      this.comments,
       required this.location,
       required this.dateCommitted,
       required this.dateReported,
@@ -51,6 +55,8 @@ class CaseModel {
         'evidenceUrl': evidenceUrl,
         'status': status,
         'caseID': caseID,
+        'comments': comments,
+        'witnesses': witnesses,
         'reportedBy': reportedBy,
         'howItWasResolved': howItWasResolved,
         'location': location,
@@ -73,7 +79,9 @@ class CaseModel {
   factory CaseModel.fromJson(Map<String, dynamic> json) => CaseModel(
         id: json['id'],
         caseID: json["caseID"],
+        witnesses: json["witnesses"],
         evidenceUrl: json['evidenceUrl'],
+        comments: json['comments'],
         status: json['status'],
         reportedBy: json['reportedBy'],
         howItWasResolved: json['howItWasResolved'],
@@ -100,6 +108,8 @@ class CaseModel {
       id: document.id,
       evidenceUrl: data['evidenceUrl'],
       status: data['status'],
+      witnesses: data['witnesses'],
+      comments: data['comments'],
       caseID: data['caseID'],
       reportedBy: data['reportedBy'],
       howItWasResolved: data['howItWasResolved'],
@@ -117,6 +127,114 @@ class CaseModel {
       reportingOutcome: data['reportingOutcome'],
       resolutionDetails: data['resolutionDetails'],
       selectedOffences: data['selectedOffences'],
+    );
+  }
+}
+
+//create class comment model with the following fields : comment, likes, approved,date
+
+class Comment {
+  final String? id;
+  final String? comment;
+  final int? numberOfLikes;
+  final int? numberOfDislikes;
+  final List<LikeAndDislike>? likes;
+  final List<LikeAndDislike>? dislikes;
+  final String? approved;
+  final String? date;
+  final String? caseID;
+  final String? userID;
+
+  Comment(
+      {this.id,
+      this.comment,
+      this.numberOfLikes,
+      this.numberOfDislikes,
+      this.likes,
+      this.dislikes,
+      this.approved,
+      this.date,
+      this.caseID,
+      this.userID});
+
+  //to json
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'comment': comment,
+        'numberOfLikes': numberOfLikes,
+        'numberOfDislikes': numberOfDislikes,
+        'likes': likes,
+        'dislikes': dislikes,
+        'approved': approved,
+        'date': date,
+        'caseID': caseID,
+        'userID': userID,
+      };
+
+  //from json
+  factory Comment.fromJson(Map<String, dynamic> json) => Comment(
+        id: json['id'],
+        comment: json['comment'],
+        numberOfLikes: json['numberOfLikes'],
+        numberOfDislikes: json['numberOfDislikes'],
+        likes: json['likes'],
+        dislikes: json['dislikes'],
+        approved: json['approved'],
+        date: json['date'],
+        caseID: json['caseID'],
+        userID: json['userID'],
+      );
+
+  factory Comment.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data()!;
+    return Comment(
+      id: document.id,
+      comment: data['comment'],
+      numberOfLikes: data['numberOfLikes'],
+      numberOfDislikes: data['numberOfDislikes'],
+      likes: data['likes'],
+      dislikes: data['dislikes'],
+      approved: data['approved'],
+      date: data['date'],
+      caseID: data['caseID'],
+      userID: data['userID'],
+    );
+  }
+}
+
+class LikeAndDislike {
+  final String? id;
+  final String? caseID;
+  final String? userID;
+  final String? date;
+
+  LikeAndDislike({this.id, this.caseID, this.userID, this.date});
+
+  //to json
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'caseID': caseID,
+        'userID': userID,
+        'date': date,
+      };
+
+  //from json
+  factory LikeAndDislike.fromJson(Map<String, dynamic> json) => LikeAndDislike(
+        id: json['id'],
+        caseID: json['caseID'],
+        userID: json['userID'],
+        date: json['date'],
+      );
+
+  factory LikeAndDislike.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data()!;
+    return LikeAndDislike(
+      id: document.id,
+      caseID: data['caseID'],
+      userID: data['userID'],
+      date: data['date'],
     );
   }
 }

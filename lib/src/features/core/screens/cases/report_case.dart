@@ -57,6 +57,7 @@ class _ReportCorruptionScreenState extends State<ReportCorruptionScreen> {
   }
 
   String? _onBehalfOf;
+  String? _witnesses;
   DateTime? _selectedDate; // Variable to store the selected date
   List<String> urls = [];
   bool isUploading = false;
@@ -101,10 +102,16 @@ class _ReportCorruptionScreenState extends State<ReportCorruptionScreen> {
       ));
       return;
     } else {
+      setState(() {
+        isUploading = true;
+      });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Uploading File"),
       ));
     }
+
+    //clear urls
+    urls.clear();
 
     // Upload each file to Firebase Storage
     for (var file in result.files) {
@@ -134,6 +141,9 @@ class _ReportCorruptionScreenState extends State<ReportCorruptionScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Files Uploaded"),
     ));
+    setState(() {
+      isUploading = false;
+    });
   }
 
   @override
@@ -153,449 +163,528 @@ class _ReportCorruptionScreenState extends State<ReportCorruptionScreen> {
             autovalidateMode:
                 AutovalidateMode.always, // Always validate the form
 
-            child: ListView(
-              physics: BouncingScrollPhysics(),
+            child: Stack(
               children: [
-                TextFormField(
-                  controller: _locationController,
-                  decoration: InputDecoration(
-                    labelText: 'Where did the incident occur?',
-                  ),
-                  validator: (value) {
-                    if (value!.trim().isEmpty) {
-                      return 'Please enter the location';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                TextFormField(
-                  controller: _dateController,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: 'Date of incident (dd/mm/yyyy)',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.calendar_today),
-                      onPressed: () {
+                if (isUploading) LinearProgressIndicator(),
+                ListView(
+                  physics: BouncingScrollPhysics(),
+                  children: [
+                    if (isUploading)
+                      Column(
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                            child: Center(
+                              child: Text(
+                                "Uploading Evidence...",
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ),
+                          ),
+                          LinearProgressIndicator(),
+                        ],
+                      ),
+
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                      controller: _locationController,
+                      decoration: InputDecoration(
+                        labelText: 'Where did the incident occur?',
+                      ),
+                      validator: (value) {
+                        if (value!.trim().isEmpty) {
+                          return 'Please enter the location';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    GestureDetector(
+                      onTap: () {
                         _selectDateTime(context);
                       },
-                    ),
-                  ),
-                  // put a calendar icon here
-
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter the date';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    // You can parse and store the date as needed
-                  },
-                ),
-                SizedBox(height: 16.0),
-                // Offences checkboxes
-                Text(
-                  'I believe or suspect the following offences (check all that apply) under the Anti-Corruption Law have been committed:',
-                  style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8.0),
-                Column(
-                  children: _offencesList
-                      .map((offence) => CheckboxListTile(
-                            title: Text(
-                              offence,
-                              style: TextStyle(fontSize: 14.0),
-                            ),
-                            value: _selectedOffences.contains(offence),
-                            onChanged: (bool? value) {
-                              setState(() {
-                                if (value!) {
-                                  _selectedOffences.add(offence);
-                                } else {
-                                  _selectedOffences.remove(offence);
-                                }
-                              });
+                      child: TextFormField(
+                        controller: _dateController,
+                        enabled: false,
+                        decoration: InputDecoration(
+                          labelText: 'Date of incident (dd/mm/yyyy)',
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.calendar_today),
+                            onPressed: () {
+                              _selectDateTime(context);
                             },
-                          ))
-                      .toList(),
-                ),
-                SizedBox(height: 30.0),
-                TextFormField(
-                  controller: _personsInvolvedController,
-                  decoration: InputDecoration(
-                    labelText: 'Person(s) involved',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter the person(s) involved';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                TextFormField(
-                  controller: _supportingEvidenceController,
-                  decoration: InputDecoration(
-                    labelText: 'Supporting Evidence Description',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please provide supporting evidence';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                Text(
-                  'Please attach any supporting evidence (max 4 images)',
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    print("IsUploading = true");
+                          ),
+                        ),
+                        // put a calendar icon here
 
-                    setState(() {
-                      isUploading =
-                          true; // Set isUploading to true before uploading
-                    });
-
-                    // Call the uploadDataToFirebase() method
-                    await uploadDataToFirebase();
-
-                    setState(() {
-                      isUploading =
-                          false; // Set isUploading to false after uploading
-                    });
-
-                    print("Isuploading = false ");
-                  },
-                  child: Text("Attach"),
-                ),
-                SizedBox(height: 16.0),
-                TextFormField(
-                  controller: _reportDetailsController,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    labelText: 'Report Details',
-                    border: OutlineInputBorder(
-                      // Added border to the text field
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter the report details';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                Text(
-                  'Are you making this report/complaint on behalf of someone else?',
-                ),
-                SizedBox(height: 8.0),
-                Row(
-                  children: [
-                    Radio(
-                      value: 'YES',
-                      groupValue: _onBehalfOf,
-                      onChanged: (value) {
-                        setState(() {
-                          _onBehalfOf = value as String?;
-                        });
-                      },
-                    ),
-                    Text('YES'),
-                    SizedBox(width: 16.0),
-                    Radio(
-                      value: 'NO',
-                      groupValue: _onBehalfOf,
-                      onChanged: (value) {
-                        setState(() {
-                          _onBehalfOf = value as String?;
-                          if (_onBehalfOf == 'NO') {
-                            _awarenessDetailsController.text = "N/A";
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter the date';
                           }
-                        });
-                      },
-                    ),
-                    Text('NO'),
-                  ],
-                ),
-                SizedBox(height: 16.0),
-                if (_onBehalfOf == 'YES')
-                  Text("How and when did you become aware of the incident?"),
-                if (_onBehalfOf == 'YES')
-                  TextFormField(
-                    maxLines: null,
-                    controller: _awarenessDetailsController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        // Added border to the text field
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please provide details';
-                      }
-                      return null;
-                    },
-                  ),
-
-                SizedBox(height: 16.0),
-                Text(
-                    "If you believe there is additional evidence, describe it"),
-                TextFormField(
-                  maxLines: null,
-                  controller: _additionalEvidenceController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      // Added border to the text field
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please provide details';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                Text(
-                    "Are there any other people who may be aware of this matter and may be able to assist in investigating it? If so, who are they and how may they be contacted?"),
-                TextFormField(
-                  maxLines: null,
-                  controller: _additionalWitnessesController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      // Added border to the text field
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please provide details';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                Text(
-                    "What do you want to happen as a result of making this report/complaint?"),
-                TextFormField(
-                  maxLines: null,
-                  controller: _desiredOutcomeController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      // Added border to the text field
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please provide details';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                Text(
-                    'Have you reported, or complained about, this matter to any other person or agency? If so, to whom or to which agency? What was the outcome? Please attach any relevant correspondence.'),
-                TextFormField(
-                  maxLines: null,
-                  controller: _reportingOutcomeController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      // Added border to the text field
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please provide details';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16.0),
-                Text(
-                    'Have you tried to resolve this matter in any other way? If yes, please give details.'),
-                TextFormField(
-                  maxLines: null,
-                  controller: _resolutionDetailsController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      // Added border to the text field
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please provide details';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 32.0),
-                ElevatedButton(
-                  onPressed: isUploading
-                      ? () {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(
-                                "Please wait for Evidence upload to finish"),
-                          ));
-                        }
-                      : () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            // Process the form data
-
-                            CaseModel caseModel = CaseModel(
-                              dateReported:
-                                  _formatDateTime(DateTime.now().toString()),
-                              status: "Open",
-                              howItWasResolved: "",
-                              caseID: generateRandomString(),
-                              reportedBy: userID,
-                              location: _locationController.text,
-                              dateCommitted: _dateController.text,
-                              personsInvolved: _personsInvolvedController.text,
-                              supportingEvidence:
-                                  _supportingEvidenceController.text,
-                              reportDetails: _reportDetailsController.text,
-                              onBehalfOf: _onBehalfOf.toString(),
-                              awarenessDetails:
-                                  _awarenessDetailsController.text,
-                              additionalEvidence:
-                                  _additionalEvidenceController.text,
-                              additionalWitnesses:
-                                  _additionalWitnessesController.text,
-                              desiredOutcome: _desiredOutcomeController.text,
-                              reportingOutcome:
-                                  _reportingOutcomeController.text,
-                              resolutionDetails:
-                                  _resolutionDetailsController.text,
-                              selectedOffences: _selectedOffences,
-                              evidenceUrl: urls,
-                            );
-
-                            print(caseModel.toJson());
-                            controller2.saveCase(
-                              caseModel,
-                              generateRandomString(),
-                            );
-                            wipeData();
-                            //Get.to(() => ReportCorruptionScreen());
-                          }
+                          return null;
                         },
-                  child: Text('Submit'),
+                        onSaved: (value) {
+                          // You can parse and store the date as needed
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 16.0),
+                    // Offences checkboxes
+                    Text(
+                      'I believe or suspect the following offences (check all that apply) under the Anti-Corruption Law have been committed:',
+                      style: TextStyle(
+                          fontSize: 15.0, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8.0),
+                    Column(
+                      children: _offencesList
+                          .map((offence) => CheckboxListTile(
+                                title: Text(
+                                  offence,
+                                  style: TextStyle(fontSize: 14.0),
+                                ),
+                                value: _selectedOffences.contains(offence),
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    if (value!) {
+                                      _selectedOffences.add(offence);
+                                    } else {
+                                      _selectedOffences.remove(offence);
+                                    }
+                                  });
+                                },
+                              ))
+                          .toList(),
+                    ),
+                    SizedBox(height: 30.0),
+                    TextFormField(
+                      controller: _personsInvolvedController,
+                      decoration: InputDecoration(
+                        labelText: 'Person(s) involved',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter the person(s) involved';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: _supportingEvidenceController,
+                      decoration: InputDecoration(
+                        labelText: 'Supporting Evidence Description',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please provide supporting evidence';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    Text(
+                      'Please attach any supporting evidence (max 4 images)',
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        print("IsUploading = true");
+
+                        setState(() {
+                          isUploading =
+                              true; // Set isUploading to true before uploading
+                        });
+
+                        // Call the uploadDataToFirebase() method
+                        await uploadDataToFirebase();
+
+                        setState(() {
+                          isUploading =
+                              false; // Set isUploading to false after uploading
+                        });
+
+                        print("Isuploading = false ");
+                      },
+                      child: Text("Attach"),
+                    ),
+                    SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: _reportDetailsController,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        labelText: 'Report Details',
+                        border: OutlineInputBorder(
+                          // Added border to the text field
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter the report details';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    Text(
+                      'Are you making this report/complaint on behalf of someone else?',
+                    ),
+                    SizedBox(height: 8.0),
+                    Row(
+                      children: [
+                        Radio(
+                          value: 'YES',
+                          groupValue: _onBehalfOf,
+                          onChanged: (value) {
+                            setState(() {
+                              _onBehalfOf = value as String?;
+                              if (_onBehalfOf == 'YES') {
+                                _awarenessDetailsController.text = "";
+                              }
+                            });
+                          },
+                        ),
+                        Text('YES'),
+                        SizedBox(width: 16.0),
+                        Radio(
+                          value: 'NO',
+                          groupValue: _onBehalfOf,
+                          onChanged: (value) {
+                            setState(() {
+                              _onBehalfOf = value as String?;
+                              if (_onBehalfOf == 'NO') {
+                                _awarenessDetailsController.text = "N/A";
+                              }
+                            });
+                          },
+                        ),
+                        Text('NO'),
+                      ],
+                    ),
+                    SizedBox(height: 16.0),
+                    if (_onBehalfOf == 'YES')
+                      Text(
+                          "How and when did you become aware of the incident?"),
+                    if (_onBehalfOf == 'YES')
+                      TextFormField(
+                        maxLines: null,
+                        controller: _awarenessDetailsController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            // Added border to the text field
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please provide details';
+                          }
+                          return null;
+                        },
+                      ),
+
+                    SizedBox(height: 16.0),
+                    Text(
+                        "If you believe there is additional evidence, describe it"),
+                    TextFormField(
+                      maxLines: null,
+                      controller: _additionalEvidenceController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          // Added border to the text field
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please provide details';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    Text(
+                        "Are there any other people who may be aware of this matter and may be able to assist in investigating it ?"),
+
+                    SizedBox(height: 8.0),
+                    Row(
+                      children: [
+                        Radio(
+                          value: 'YES',
+                          groupValue: _witnesses,
+                          onChanged: (value) {
+                            setState(() {
+                              _witnesses = value as String?;
+                              if (_witnesses == 'YES') {
+                                _additionalWitnessesController.text = "";
+                              }
+                            });
+                          },
+                        ),
+                        Text('YES'),
+                        SizedBox(width: 16.0),
+                        Radio(
+                          value: 'NO',
+                          groupValue: _witnesses,
+                          onChanged: (value) {
+                            setState(() {
+                              _witnesses = value as String?;
+                              if (_witnesses == 'NO') {
+                                _additionalWitnessesController.text = "None";
+                              }
+                            });
+                          },
+                        ),
+                        Text('NO'),
+                      ],
+                    ),
+
+                    SizedBox(height: 8.0),
+                    if (_witnesses == 'YES')
+                      Text(
+                          "Who are they and how may they be contacted? N.B This information will be kept confidential."),
+
+                    SizedBox(height: 8.0),
+                    if (_witnesses == 'YES')
+                      TextFormField(
+                        maxLines: null,
+                        controller: _additionalWitnessesController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            // Added border to the text field
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please provide details';
+                          }
+                          return null;
+                        },
+                      ),
+                    SizedBox(height: 16.0),
+                    Text(
+                        "What do you want to happen as a result of making this report/complaint?"),
+                    TextFormField(
+                      maxLines: null,
+                      controller: _desiredOutcomeController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          // Added border to the text field
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please provide details';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    Text(
+                        'Have you reported, or complained about, this matter to any other person or agency? If so, to whom or to which agency? What was the outcome? Please attach any relevant correspondence.'),
+                    TextFormField(
+                      maxLines: null,
+                      controller: _reportingOutcomeController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          // Added border to the text field
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please provide details';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    Text(
+                        'Have you tried to resolve this matter in any other way? If yes, please give details.'),
+                    TextFormField(
+                      maxLines: null,
+                      controller: _resolutionDetailsController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          // Added border to the text field
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please provide details';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 32.0),
+                    ElevatedButton(
+                      onPressed: isUploading
+                          ? () {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(
+                                    "Please wait for Evidence upload to finish"),
+                              ));
+                            }
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                // Process the form data
+
+                                CaseModel caseModel = CaseModel(
+                                  dateReported: _formatDateTime(
+                                      DateTime.now().toString()),
+                                  status: "Open",
+                                  howItWasResolved: "",
+                                  caseID: generateRandomString(),
+                                  reportedBy: userID,
+                                  witnesses: _witnesses,
+                                  comments: [],
+                                  location: _locationController.text,
+                                  dateCommitted: _dateController.text,
+                                  personsInvolved:
+                                      _personsInvolvedController.text,
+                                  supportingEvidence:
+                                      _supportingEvidenceController.text,
+                                  reportDetails: _reportDetailsController.text,
+                                  onBehalfOf: _onBehalfOf.toString(),
+                                  awarenessDetails:
+                                      _awarenessDetailsController.text,
+                                  additionalEvidence:
+                                      _additionalEvidenceController.text,
+                                  additionalWitnesses:
+                                      _additionalWitnessesController.text,
+                                  desiredOutcome:
+                                      _desiredOutcomeController.text,
+                                  reportingOutcome:
+                                      _reportingOutcomeController.text,
+                                  resolutionDetails:
+                                      _resolutionDetailsController.text,
+                                  selectedOffences: _selectedOffences,
+                                  evidenceUrl: urls,
+                                );
+
+                                print(caseModel.toJson());
+                                controller2.saveCase(
+                                  caseModel,
+                                  generateRandomString(),
+                                );
+                                wipeData();
+                                //Get.to(() => ReportCorruptionScreen());
+                              }
+                            },
+                      child: Text('Submit'),
+                    ),
+                  ],
                 ),
               ],
             ),
