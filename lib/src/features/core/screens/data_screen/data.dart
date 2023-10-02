@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:integritylink/src/constants/colors.dart';
-import 'package:integritylink/src/features/core/screens/cases/cases_list.dart';
-import 'package:integritylink/src/features/core/screens/cases/report_case.dart';
 import 'package:integritylink/src/features/core/screens/data_screen/data_list.dart';
-import 'package:integritylink/src/features/core/screens/education_screens/education_dashboard.dart';
-import 'package:integritylink/src/features/core/screens/files/file_list.dart';
 import 'package:integritylink/src/features/core/screens/group_chat/helper/helper_function.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/pages/home_page.dart';
-import 'package:integritylink/src/features/core/screens/personal_chat/screens/chat_home_screen.dart';
-import 'package:integritylink/src/features/core/screens/profile/settings_screen.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 
 class DataScreen extends StatefulWidget {

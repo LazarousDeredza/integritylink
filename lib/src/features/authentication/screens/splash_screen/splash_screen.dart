@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
+import 'package:integritylink/main.dart';
 import 'package:integritylink/src/common_widgets/fade_in_animation/animation_design.dart';
 import 'package:integritylink/src/constants/colors.dart';
 import 'package:integritylink/src/constants/image_strings.dart';
@@ -19,6 +20,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(FadeInAnimationController());
     controller.startSplashAnimation();
+    mq = MediaQuery.of(context).size;
 
     return Scaffold(
       body: SafeArea(
@@ -64,7 +66,8 @@ class SplashScreen extends StatelessWidget {
                 bottomBefore: 0,
                 bottomAfter: 100,
               ),
-              child: const Image(
+              child: Image(
+                width: mq.width,
                 image: AssetImage(tSplashImage),
               ),
             ),

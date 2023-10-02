@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:integritylink/src/features/core/screens/cases/admin/admin_view_case.dart';
 import 'package:integritylink/src/features/core/screens/cases/report_case.dart';
-import 'package:integritylink/src/features/core/screens/cases/view_case.dart';
 import 'package:integritylink/src/features/core/screens/institutional_group_chat/widgets/widgets.dart';
 
 class AdminCaseListScreen extends StatefulWidget {
