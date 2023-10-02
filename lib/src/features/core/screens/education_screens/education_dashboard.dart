@@ -25,7 +25,7 @@ class EducationDashboard extends StatelessWidget {
                 child: Text(
                   "Sub Menu",
                   style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.grey,
                       fontWeight: FontWeight.bold,
                       fontSize: 17),
                 ),

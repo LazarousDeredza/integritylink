@@ -5,6 +5,7 @@ import 'package:integritylink/src/features/core/screens/cases/report_case.dart';
 import 'package:integritylink/src/features/core/screens/data_screen/data.dart';
 import 'package:integritylink/src/features/core/screens/education_screens/education_dashboard.dart';
 import 'package:integritylink/src/features/core/screens/group_chat/pages/home_page.dart';
+import 'package:integritylink/src/features/core/screens/institutional_group_chat/pages/home_page.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/screens/chat_home_screen.dart';
 import 'package:integritylink/src/features/core/screens/profile/settings_screen.dart';
 
@@ -459,7 +460,8 @@ class DevicesGridDashboard extends StatelessWidget {
                   ),
                   'Club',
                   'Network', () {
-                Get.to(() => CommunityGroupHomePage());
+                _showClubChooseBottomSheet(
+                    context); // Show the bottom sheet on tap
               }),
               CardField(
                   size,
@@ -476,6 +478,57 @@ class DevicesGridDashboard extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+
+  void _showClubChooseBottomSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Choose a type of club',
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Close the bottom sheet
+                        Get.to(() => InstututionalHomeGroupScreen());
+                      },
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          child: Text('Institutional')),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        //  Perform logout action
+                        Navigator.pop(context);
+                        // Close the bottom sheet
+
+                        Get.to(
+                          () => CommunityGroupHomePage(),
+                        );
+                      },
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          child: Text('Community')),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

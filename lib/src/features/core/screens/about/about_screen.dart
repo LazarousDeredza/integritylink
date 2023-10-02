@@ -41,21 +41,15 @@ class AboutScreen extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.only(left: 10, right: 10),
               child: SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height -
-                        200, // Adjust the value as needed
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        top: 20, bottom: 30, left: 10, right: 10),
-                    child: Text(
-                      tAbout,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            letterSpacing: .4,
-                          ),
-                      textAlign: TextAlign.justify,
-                    ),
+                child: Padding(
+                  padding:
+                      EdgeInsets.only(top: 20, bottom: 15, left: 10, right: 10),
+                  child: Text(
+                    tAbout,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          letterSpacing: .4,
+                        ),
+                    textAlign: TextAlign.justify,
                   ),
                 ),
               ),

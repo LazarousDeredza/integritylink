@@ -335,39 +335,19 @@ class _DataScreenState extends State<DataScreen> {
                 width: size.width,
               ),
               GradientContainer(size),
-              Positioned(
-                top: size.height * .04,
-                width: size.width,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Goverment Documents",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 26,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: Text(
-                          textAlign: TextAlign.justify,
-                          "This is a collection of goverment documents\n that are available for public access.",
-                          style: TextStyle(
-                            color: Colors.blueAccent,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
             ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 1, bottom: 5),
+            child: Text(
+              textAlign: TextAlign.justify,
+              "This is a collection of goverment documents\n that are available for public access.",
+              style: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+            ),
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -394,15 +374,16 @@ class _DataScreenState extends State<DataScreen> {
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30)),
           image: DecorationImage(
-              image: AssetImage('assets/bg.jpg'), fit: BoxFit.cover)),
+              image: AssetImage('assets/images/governmentdocuments1.png'),
+              fit: BoxFit.cover)),
       child: Container(
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30)),
             gradient: LinearGradient(colors: [
-              tPrimaryColor.withOpacity(0.6),
-              primaryColor.withOpacity(0.9)
+              tPrimaryColor.withOpacity(0.2),
+              primaryColor.withOpacity(0.3)
             ])),
       ),
     );

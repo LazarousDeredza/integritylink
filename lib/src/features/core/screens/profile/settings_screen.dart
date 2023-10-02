@@ -21,6 +21,9 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+
+    //get current logged in user email
+    var email = AuthenticationRepository.instance.firebaseUser.value!.email;
     Get.put(FabIconController());
 
     return Scaffold(
@@ -142,72 +145,65 @@ class SettingsScreen extends StatelessWidget {
                 //menu
 
                 ProfileMenuWidget(
-                  title: tMenu2,
-                  icon: LineAwesomeIcons.info,
-                  onPress: () {},
-                ),
-                ProfileMenuWidget(
                   title: tMenu3,
                   icon: LineAwesomeIcons.question_circle,
                   onPress: () {
                     Get.to(() => AboutScreen());
                   },
                 ),
-                Center(
-                  child: Text("Adminstrative"),
-                ),
-                ProfileMenuWidget(
-                  title: "Notifications",
-                  icon: LineAwesomeIcons.bell,
-                  onPress: () {
-                    Get.to(
-                      () => AdminCaseListScreen(),
-                    );
-                  },
-                ),
+                if (email == "ninja.ld49@gmail.com" ||
+                    email == "pamodzichildafrica@gmail.com" ||
+                    email == "")
+                  Center(
+                    child: Text("Adminstrative"),
+                  ),
+                if (email == "ninja.ld49@gmail.com" ||
+                    email == "pamodzichildafrica@gmail.com" ||
+                    email == "")
+                  ProfileMenuWidget(
+                    title: "Approvals",
+                    icon: LineAwesomeIcons.bell,
+                    onPress: () {
+                      Get.to(
+                        () => AdminCaseListScreen(),
+                      );
+                    },
+                  ),
 
-                ProfileMenuWidget(
-                  title: "Institutions",
-                  icon: LineAwesomeIcons.school,
-                  onPress: () {
-                    if (AuthenticationRepository
-                                .instance.firebaseUser.value!.email ==
-                            "ninja.ld49@gmail.com" ||
-                        AuthenticationRepository
-                                .instance.firebaseUser.value!.email ==
-                            "lazarousderedza99@gmail.com") {
-                      Get.to(() => InstitutionHome());
-                    } else {
-                      Get.snackbar(
-                        "Permission Denied",
-                        "",
-                        icon: Icon(Icons.error),
-                        snackPosition: SnackPosition.BOTTOM,
-                      );
-                    }
-                  },
-                ),
-                ProfileMenuWidget(
-                  title: "Users",
-                  icon: LineAwesomeIcons.users,
-                  onPress: () {
-                    if (AuthenticationRepository
-                                .instance.firebaseUser.value!.email ==
-                            "ninja.ld49@gmail.com" ||
-                        AuthenticationRepository
-                                .instance.firebaseUser.value!.email ==
-                            "lazarousderedza99@gmail.com") {
+                if (email == "ninja.ld49@gmail.com" ||
+                    email == "pamodzichildafrica@gmail.com" ||
+                    email == "")
+                  ProfileMenuWidget(
+                    title: "Institutions",
+                    icon: LineAwesomeIcons.school,
+                    onPress: () {
+                      if (AuthenticationRepository
+                                  .instance.firebaseUser.value!.email ==
+                              "ninja.ld49@gmail.com" ||
+                          AuthenticationRepository
+                                  .instance.firebaseUser.value!.email ==
+                              "lazarousderedza99@gmail.com") {
+                        Get.to(() => InstitutionHome());
+                      } else {
+                        Get.snackbar(
+                          "Permission Denied",
+                          "",
+                          icon: Icon(Icons.error),
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      }
+                    },
+                  ),
+                if (email == "ninja.ld49@gmail.com" ||
+                    email == "pamodzichildafrica@gmail.com" ||
+                    email == "")
+                  ProfileMenuWidget(
+                    title: "Users",
+                    icon: LineAwesomeIcons.users,
+                    onPress: () {
                       Get.to(() => UsersScreen());
-                    } else {
-                      Get.snackbar(
-                        "Permission Denied",
-                        "",
-                        icon: Icon(Icons.error),
-                        snackPosition: SnackPosition.BOTTOM,
-                      );
-                    }
-                  },
-                ),
+                    },
+                  ),
                 const SizedBox(height: 10),
                 const Divider(),
                 const SizedBox(height: 5),

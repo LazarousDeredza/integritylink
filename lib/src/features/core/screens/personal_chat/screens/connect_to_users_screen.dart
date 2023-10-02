@@ -98,7 +98,6 @@ class _ChatUsersScreenState extends State<ChatUsersScreen> {
                             );
                           }),
                           child: ListTile(
-                            tileColor: Colors.grey[200],
                             shape: ShapeBorder.lerp(
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),

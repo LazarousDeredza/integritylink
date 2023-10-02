@@ -69,7 +69,6 @@ class _InstitutionHomeState extends State<InstitutionHome> {
                     return Column(
                       children: [
                         ListTile(
-                          tileColor: Colors.grey[200],
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           leading: snapshot.data![index].image != null &&
