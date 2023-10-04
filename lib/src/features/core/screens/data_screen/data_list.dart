@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:integritylink/src/features/core/screens/group_chat/widgets/widgets.dart';
+import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -93,14 +94,21 @@ class _DataListScreenState extends State<DataListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var email = AuthenticationRepository.instance.firebaseUser.value!.email;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(typeOfDocument),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: uploadDataToFirebase,
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: email == "ninja.ld49@gmail.com" ||
+              email == "pamodzichildafrica@gmail.com" ||
+              email == "info@yc4integritybuilding.org" ||
+              email == "ken@yc4integritybuilding.org"
+          ? FloatingActionButton(
+              onPressed: uploadDataToFirebase,
+              child: Icon(Icons.add),
+            )
+          : null,
       body: StreamBuilder(
         stream:
             FirebaseFirestore.instance.collection(typeOfDocument).snapshots(),

@@ -153,13 +153,15 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 if (email == "ninja.ld49@gmail.com" ||
                     email == "pamodzichildafrica@gmail.com" ||
-                    email == "")
+                    email == "info@yc4integritybuilding.org" ||
+                    email == "ken@yc4integritybuilding.org")
                   Center(
                     child: Text("Adminstrative"),
                   ),
                 if (email == "ninja.ld49@gmail.com" ||
                     email == "pamodzichildafrica@gmail.com" ||
-                    email == "")
+                    email == "info@yc4integritybuilding.org" ||
+                    email == "ken@yc4integritybuilding.org")
                   ProfileMenuWidget(
                     title: "Approvals",
                     icon: LineAwesomeIcons.bell,
@@ -172,17 +174,16 @@ class SettingsScreen extends StatelessWidget {
 
                 if (email == "ninja.ld49@gmail.com" ||
                     email == "pamodzichildafrica@gmail.com" ||
-                    email == "")
+                    email == "info@yc4integritybuilding.org" ||
+                    email == "ken@yc4integritybuilding.org")
                   ProfileMenuWidget(
                     title: "Institutions",
                     icon: LineAwesomeIcons.school,
                     onPress: () {
-                      if (AuthenticationRepository
-                                  .instance.firebaseUser.value!.email ==
-                              "ninja.ld49@gmail.com" ||
-                          AuthenticationRepository
-                                  .instance.firebaseUser.value!.email ==
-                              "lazarousderedza99@gmail.com") {
+                      if (email == "ninja.ld49@gmail.com" ||
+                          email == "pamodzichildafrica@gmail.com" ||
+                          email == "info@yc4integritybuilding.org" ||
+                          email == "ken@yc4integritybuilding.org") {
                         Get.to(() => InstitutionHome());
                       } else {
                         Get.snackbar(
@@ -196,7 +197,8 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 if (email == "ninja.ld49@gmail.com" ||
                     email == "pamodzichildafrica@gmail.com" ||
-                    email == "")
+                    email == "info@yc4integritybuilding.org" ||
+                    email == "ken@yc4integritybuilding.org")
                   ProfileMenuWidget(
                     title: "Users",
                     icon: LineAwesomeIcons.users,

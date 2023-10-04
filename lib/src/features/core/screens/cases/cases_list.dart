@@ -222,26 +222,6 @@ class _CaseListScreenState extends State<CaseListScreen> {
                                   ),
                                 ],
                               ),
-                              trailing: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      // Add your code for editing here
-                                      id = x.id;
-                                      print("Case ID = " + x.id);
-                                      popUpDialog(context);
-                                    },
-                                    icon: Icon(
-                                      Icons.edit,
-                                      color: Colors.blue,
-                                      size: 35.0,
-                                    ),
-                                  ),
-                                ],
-                              ),
                             ),
                             Divider(),
                           ],
