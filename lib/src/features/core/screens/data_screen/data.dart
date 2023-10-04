@@ -635,38 +635,41 @@ CardField(
 ) {
   return Padding(
     padding: const EdgeInsets.all(2),
-    child: Card(
-      color: Colors.white.withOpacity(0.7),
-      child: GestureDetector(
-        onTap: onTap,
-        child: SizedBox(
-          height: size.height * .15,
-          width: size.width * .39,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatar(backgroundColor: color, child: icon),
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5, bottom: 5),
-                      child: Text(title,
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12)),
-                    ),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 11),
-                    )
-                  ],
-                )
-              ],
+    child: GestureDetector(
+      onTap: onTap,
+      child: Card(
+        color: Colors.white.withOpacity(0.7),
+        child: GestureDetector(
+          onTap: onTap,
+          child: SizedBox(
+            height: size.height * .15,
+            width: size.width * .39,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(backgroundColor: color, child: icon),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5, bottom: 5),
+                        child: Text(title,
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12)),
+                      ),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11),
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
