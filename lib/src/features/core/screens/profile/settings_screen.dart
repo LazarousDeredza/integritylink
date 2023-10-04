@@ -154,6 +154,7 @@ class SettingsScreen extends StatelessWidget {
                 if (email == "ninja.ld49@gmail.com" ||
                     email == "pamodzichildafrica@gmail.com" ||
                     email == "info@yc4integritybuilding.org" ||
+                    email == "damarisaswa12@gmail.com" ||
                     email == "ken@yc4integritybuilding.org")
                   Center(
                     child: Text("Adminstrative"),
@@ -161,6 +162,7 @@ class SettingsScreen extends StatelessWidget {
                 if (email == "ninja.ld49@gmail.com" ||
                     email == "pamodzichildafrica@gmail.com" ||
                     email == "info@yc4integritybuilding.org" ||
+                    email == "damarisaswa12@gmail.com" ||
                     email == "ken@yc4integritybuilding.org")
                   ProfileMenuWidget(
                     title: "Approvals",
@@ -175,6 +177,7 @@ class SettingsScreen extends StatelessWidget {
                 if (email == "ninja.ld49@gmail.com" ||
                     email == "pamodzichildafrica@gmail.com" ||
                     email == "info@yc4integritybuilding.org" ||
+                    email == "damarisaswa12@gmail.com" ||
                     email == "ken@yc4integritybuilding.org")
                   ProfileMenuWidget(
                     title: "Institutions",
@@ -183,6 +186,7 @@ class SettingsScreen extends StatelessWidget {
                       if (email == "ninja.ld49@gmail.com" ||
                           email == "pamodzichildafrica@gmail.com" ||
                           email == "info@yc4integritybuilding.org" ||
+                          email == "damarisaswa12@gmail.com" ||
                           email == "ken@yc4integritybuilding.org") {
                         Get.to(() => InstitutionHome());
                       } else {
@@ -198,6 +202,7 @@ class SettingsScreen extends StatelessWidget {
                 if (email == "ninja.ld49@gmail.com" ||
                     email == "pamodzichildafrica@gmail.com" ||
                     email == "info@yc4integritybuilding.org" ||
+                    email == "damarisaswa12@gmail.com" ||
                     email == "ken@yc4integritybuilding.org")
                   ProfileMenuWidget(
                     title: "Users",

@@ -103,6 +103,7 @@ class _DataListScreenState extends State<DataListScreen> {
       floatingActionButton: email == "ninja.ld49@gmail.com" ||
               email == "pamodzichildafrica@gmail.com" ||
               email == "info@yc4integritybuilding.org" ||
+              email == "damarisaswa12@gmail.com" ||
               email == "ken@yc4integritybuilding.org"
           ? FloatingActionButton(
               onPressed: uploadDataToFirebase,
