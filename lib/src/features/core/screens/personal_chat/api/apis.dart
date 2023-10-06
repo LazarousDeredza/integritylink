@@ -51,6 +51,8 @@ class APIs {
   static Future<void> getFirebaseMessagingToken() async {
     await fMessaging.requestPermission();
 
+//only do if there is an email signed in on the device
+
     await fMessaging.getToken().then((t) {
       if (t != null) {
         me.pushToken = t;

@@ -38,50 +38,53 @@ class _DocumentCommentsScreenState extends State<DocumentCommentsScreen> {
         child: Column(
           children: [
 //add a text field to add comments and a button to submit
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _commentController,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      hintText: 'Add a comment',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(2.0),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                          width: 1.0,
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _commentController,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        hintText: 'Add a comment',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
                         ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(2.0),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                          width: 1.0,
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(2.0),
-                        borderSide: BorderSide(
-                          color: Colors.grey,
-                          width: 1.0,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(width: 8.0),
-                ElevatedButton(
-                  onPressed: isSaving
-                      ? () {
-                          print("is saving");
-                        }
-                      : submitComment,
-                  //submit comment to firebase
+                  SizedBox(width: 8.0),
+                  ElevatedButton(
+                    onPressed: isSaving
+                        ? () {
+                            print("is saving");
+                          }
+                        : submitComment,
+                    //submit comment to firebase
 
-                  child: Text('Submit'),
-                ),
-              ],
+                    child: Text('Submit'),
+                  ),
+                ],
+              ),
             ),
             //show a list of comments from firebase where case id is equal to the case id of the case being viewed and approved is equal to yes
             StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(

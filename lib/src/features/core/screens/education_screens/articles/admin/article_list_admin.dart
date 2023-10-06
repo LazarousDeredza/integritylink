@@ -4,21 +4,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:integritylink/src/features/core/screens/data_screen/admin_section/admin_document_comments_screen.dart';
 import 'package:integritylink/src/features/core/screens/data_screen/document_comments_screen.dart';
 import 'package:integritylink/src/features/core/screens/group_chat/widgets/widgets.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ArticleScreen extends StatefulWidget {
-  const ArticleScreen({super.key});
+class AdminArticleListScreen extends StatefulWidget {
+  const AdminArticleListScreen({Key? key});
 
   @override
-  State<ArticleScreen> createState() => _ArticleScreenState();
+  State<AdminArticleListScreen> createState() => _AdminArticleListScreenState();
 }
 
-class _ArticleScreenState extends State<ArticleScreen> {
+class _AdminArticleListScreenState extends State<AdminArticleListScreen> {
   String url = '';
 
   uploadDataToFirebase() async {
@@ -64,7 +66,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
     String fileName = pick.path.split('/').last;
     String extension = pick.path.split('.').last;
     String fileSize = (pick.lengthSync() / 1024 / 1024).toStringAsFixed(2);
-
+    List<String> comments = [];
     //uploading file to firebase storage
     var pdfFile =
         await FirebaseStorage.instance.ref().child("articles").child(fileName);
@@ -74,11 +76,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
     url = await snapshotTask.ref.getDownloadURL();
 
     //uploading url to firebase firestore
-    await FirebaseFirestore.instance.collection('articles').add({
+    await FirebaseFirestore.instance.collection("articles").add({
       'url': url,
       'name': fileName,
       'extension': extension.toLowerCase(),
       'size': fileSize,
+      'comments': comments,
     }).whenComplete(() => () {
           //snackbar
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -92,7 +95,9 @@ class _ArticleScreenState extends State<ArticleScreen> {
     var email = AuthenticationRepository.instance.firebaseUser.value!.email;
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("Articles"),
+      ),
       floatingActionButton: email == "ninja.ld49@gmail.com" ||
               email == "pamodzichildafrica@gmail.com" ||
               email == "info@yc4integritybuilding.org" ||
@@ -104,7 +109,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
             )
           : null,
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('articles').snapshots(),
+        stream: FirebaseFirestore.instance.collection("articles").snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
@@ -238,14 +243,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                     GestureDetector(
                                         onTap: () {
                                           Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DocumentCommentsScreen(
-                                                id: x.id,
-                                              ),
-                                            ),
-                                          );
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AdminDocumentCommentsScreen(
+                                                        id: x.id,
+                                                      )));
                                         },
                                         child: Text("| Comments")),
                                     //comment icon in a stack
@@ -256,7 +259,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    DocumentCommentsScreen(
+                                                    AdminDocumentCommentsScreen(
                                                       id: x.id,
                                                     )));
                                       },
@@ -268,7 +271,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                               .collection('document_comments')
                                               .where('docID', isEqualTo: x.id)
                                               .where('approved',
-                                                  isEqualTo: 'Yes')
+                                                  isEqualTo: 'No')
                                               .snapshots(),
                                           builder: (context, snapshot) {
                                             if (snapshot.hasData) {
@@ -446,6 +449,15 @@ class _ArticleScreenState extends State<ArticleScreen> {
         },
       ),
     );
+  }
+
+// Function to launch the file using url_launcher
+  void _launchFile(String filePath) async {
+    if (await canLaunch(filePath)) {
+      await launch(filePath);
+    } else {
+      throw 'Could not launch $filePath';
+    }
   }
 
 // Function to save the file using path_provider

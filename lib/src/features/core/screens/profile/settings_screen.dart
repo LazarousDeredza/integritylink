@@ -7,6 +7,7 @@ import 'package:integritylink/src/constants/text_strings.dart';
 import 'package:integritylink/src/features/core/screens/about/about_screen.dart';
 import 'package:integritylink/src/features/core/screens/cases/admin/admin_cases_list.dart';
 import 'package:integritylink/src/features/core/screens/data_screen/admin_section/admin_data.dart';
+import 'package:integritylink/src/features/core/screens/education_screens/articles/admin/article_list_admin.dart';
 import 'package:integritylink/src/features/core/screens/institutions/Institutions_list_home.dart';
 import 'package:integritylink/src/features/core/screens/profile/update_profile.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
@@ -331,6 +332,25 @@ class SettingsScreen extends StatelessWidget {
                       child: Padding(
                           padding: EdgeInsets.only(left: 8.0, right: 8.0),
                           child: Text('Documents Comments')),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // logout action
+                        Navigator.pop(context);
+                        // Close the bottom sheet
+
+                        //logout
+                        Get.to(() => AdminArticleListScreen());
+                      },
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: Text('Article Comments')),
                     ),
                   ],
                 ),
