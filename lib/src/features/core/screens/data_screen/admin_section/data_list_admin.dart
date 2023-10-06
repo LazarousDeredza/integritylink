@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:integritylink/src/features/core/screens/data_screen/admin_section/admin_document_comments_screen.dart';
 import 'package:integritylink/src/features/core/screens/data_screen/document_comments_screen.dart';
 import 'package:integritylink/src/features/core/screens/group_chat/widgets/widgets.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
@@ -12,15 +13,15 @@ import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class DataListScreen extends StatefulWidget {
-  const DataListScreen({Key? key, required this.dataType});
+class AdminDataListScreen extends StatefulWidget {
+  const AdminDataListScreen({Key? key, required this.dataType});
   final String dataType;
 
   @override
-  State<DataListScreen> createState() => _DataListScreenState();
+  State<AdminDataListScreen> createState() => _AdminDataListScreenState();
 }
 
-class _DataListScreenState extends State<DataListScreen> {
+class _AdminDataListScreenState extends State<AdminDataListScreen> {
   String url = '';
 
   String get typeOfDocument => widget.dataType;
@@ -251,7 +252,7 @@ class _DataListScreenState extends State<DataListScreen> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      DocumentCommentsScreen(
+                                                      AdminDocumentCommentsScreen(
                                                         id: x.id,
                                                       )));
                                         },
@@ -264,7 +265,7 @@ class _DataListScreenState extends State<DataListScreen> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    DocumentCommentsScreen(
+                                                    AdminDocumentCommentsScreen(
                                                       id: x.id,
                                                     )));
                                       },
@@ -276,7 +277,7 @@ class _DataListScreenState extends State<DataListScreen> {
                                               .collection('document_comments')
                                               .where('docID', isEqualTo: x.id)
                                               .where('approved',
-                                                  isEqualTo: 'Yes')
+                                                  isEqualTo: 'No')
                                               .snapshots(),
                                           builder: (context, snapshot) {
                                             if (snapshot.hasData) {

@@ -6,6 +6,7 @@ import 'package:integritylink/src/constants/sizes.dart';
 import 'package:integritylink/src/constants/text_strings.dart';
 import 'package:integritylink/src/features/core/screens/about/about_screen.dart';
 import 'package:integritylink/src/features/core/screens/cases/admin/admin_cases_list.dart';
+import 'package:integritylink/src/features/core/screens/data_screen/admin_section/admin_data.dart';
 import 'package:integritylink/src/features/core/screens/institutions/Institutions_list_home.dart';
 import 'package:integritylink/src/features/core/screens/profile/update_profile.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
@@ -165,12 +166,10 @@ class SettingsScreen extends StatelessWidget {
                     email == "damarisaswa12@gmail.com" ||
                     email == "ken@yc4integritybuilding.org")
                   ProfileMenuWidget(
-                    title: "Approvals",
+                    title: "Comment Approvals",
                     icon: LineAwesomeIcons.bell,
                     onPress: () {
-                      Get.to(
-                        () => AdminCaseListScreen(),
-                      );
+                      _showApprovalChooseDialogBottomSheet(context);
                     },
                   ),
 
@@ -280,6 +279,58 @@ class SettingsScreen extends StatelessWidget {
                         AuthenticationRepository.instance.logout();
                       },
                       child: Text('Yes'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showApprovalChooseDialogBottomSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Choose Option',
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Close the bottom sheet
+                        Get.to(
+                          () => AdminCaseListScreen(),
+                        );
+                      },
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: Text('Cases comments')),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // logout action
+                        Navigator.pop(context);
+                        // Close the bottom sheet
+
+                        //logout
+                        Get.to(() => AdminDataScreen());
+                      },
+                      child: Padding(
+                          padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                          child: Text('Documents Comments')),
                     ),
                   ],
                 ),

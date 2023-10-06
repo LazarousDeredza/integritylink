@@ -142,7 +142,7 @@ class APIs {
 
         //for setting user status to active
         APIs.updateActiveStatus(true);
-        log('My Data: ${user.data()}');
+        print('My Data: ${user.data()}');
         await CommunityGroupHelperFunctions.saveUserToPref(me);
       } else {
         await createUser().then((value) => getSelfInfo());

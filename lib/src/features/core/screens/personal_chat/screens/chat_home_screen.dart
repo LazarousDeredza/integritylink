@@ -34,6 +34,9 @@ class _ChatHomePageState extends State<ChatHomePage> {
   @override
   void initState() {
     super.initState();
+
+    print(".......  Mu user Id is ${APIs.auth.currentUser!.uid}");
+
     APIs.getSelfInfo();
 
     //for updating user active status according to lifecycle events

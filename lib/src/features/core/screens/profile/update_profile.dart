@@ -73,7 +73,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       Stack(
                         children: [
                           //profile picture
-                          image != null
+                          image != null && image.length >= 2
                               ?
                               //image from server
                               ClipRRect(

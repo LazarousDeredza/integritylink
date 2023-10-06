@@ -154,6 +154,19 @@ class AuthenticationRepository extends GetxController {
               colorText: Colors.black,
               snackPosition: SnackPosition.BOTTOM);
 
+          await CommunityGroupHelperFunctions.saveUserLoggedInStatus(true);
+          await CommunityGroupHelperFunctions.saveUserEmailSF(email);
+
+          //get first and last name from firebase users collection where email matches
+          await FirebaseFirestore.instance
+              .collection('users')
+              .where('email', isEqualTo: email)
+              .get()
+              .then((value) {
+            CommunityGroupHelperFunctions.saveUserNameSF(
+                value.docs[0]['firstName'] + " " + value.docs[0]['lastName']);
+          });
+
           Get.offAll(() => Dashboard());
         } else {
           print("Email not verified");
