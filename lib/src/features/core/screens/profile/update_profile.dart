@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,7 @@ import 'package:integritylink/src/constants/sizes.dart';
 import 'package:integritylink/src/constants/text_strings.dart';
 import 'package:integritylink/src/features/authentication/models/user_model.dart';
 import 'package:integritylink/src/features/core/controllers/profile_controller.dart';
+import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 import '../../../../constants/colors.dart';
@@ -308,21 +310,25 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                 Text.rich(
                                   TextSpan(
                                     text: tJoined,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          fontSize: 15,
+                                        ),
                                     children: [
                                       TextSpan(
                                         text: " ",
                                       ),
                                       TextSpan(
                                         text: formatTime(joinedAt!),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -333,7 +339,53 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                                 SizedBox(
                                   width: 100,
                                   child: ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      //delete the user from firebase
+//show a confirm dialog first
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('Delete Account'),
+                                            content: Text(
+                                                'Are you sure you want to delete your account ?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('No'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  //delete the comment from firebase
+                                                  FirebaseFirestore.instance
+                                                      .collection('users')
+                                                      .doc(userData.id)
+                                                      .delete()
+                                                      .then((value) => {
+                                                            //toast message
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: Text(
+                                                                    'Account deleted successfully'),
+                                                              ),
+                                                            ),
+                                                            //logout
+                                                            AuthenticationRepository
+                                                                .instance
+                                                                .logout()
+                                                          });
+                                                },
+                                                child: Text('Yes'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
                                     child: const Text(
                                       tDelete,
                                       style: TextStyle(

@@ -47,6 +47,18 @@ class UserRespository extends GetxController {
     return userData;
   }
 
+  Future<List<UserModel>> getAllAdmins() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid.toString();
+    print("Current User =" + uid);
+    final snapshot = await _db.collection("users").get();
+    final userData = snapshot.docs
+        .map((e) => UserModel.fromSnapshot(e))
+        .where((user) => user.id != uid)
+        .where((user) => user.level == "admin")
+        .toList();
+    return userData;
+  }
+
   //update user details
   Future<void> updateUserRecord(UserModel user) async {
     print(user.id);

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:integritylink/src/constants/colors.dart';
@@ -9,6 +10,7 @@ import 'package:integritylink/src/features/core/screens/cases/admin/admin_cases_
 import 'package:integritylink/src/features/core/screens/data_screen/admin_section/admin_data.dart';
 import 'package:integritylink/src/features/core/screens/education_screens/articles/admin/article_list_admin.dart';
 import 'package:integritylink/src/features/core/screens/institutions/Institutions_list_home.dart';
+import 'package:integritylink/src/features/core/screens/profile/admins.dart';
 import 'package:integritylink/src/features/core/screens/profile/update_profile.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:integritylink/src/utils/theme/theme.dart';
@@ -17,8 +19,38 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'users.dart';
 import 'widgets/profile_menu.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+//bool is admin
+  bool isAdmin = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    //get current logged in user level
+    var level = FirebaseFirestore.instance
+        .collection("users")
+        .doc(AuthenticationRepository.instance.firebaseUser.value!.uid)
+        .get()
+        .then((value) {
+      if (value.data()!["level"] == "admin") {
+        setState(() {
+          isAdmin = true;
+        });
+      } else {
+        setState(() {
+          isAdmin = false;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +189,8 @@ class SettingsScreen extends StatelessWidget {
                     email == "pamodzichildafrica@gmail.com" ||
                     email == "info@yc4integritybuilding.org" ||
                     email == "damarisaswa12@gmail.com" ||
-                    email == "ken@yc4integritybuilding.org")
+                    email == "ken@yc4integritybuilding.org" ||
+                    isAdmin)
                   Center(
                     child: Text("Adminstrative"),
                   ),
@@ -165,7 +198,8 @@ class SettingsScreen extends StatelessWidget {
                     email == "pamodzichildafrica@gmail.com" ||
                     email == "info@yc4integritybuilding.org" ||
                     email == "damarisaswa12@gmail.com" ||
-                    email == "ken@yc4integritybuilding.org")
+                    email == "ken@yc4integritybuilding.org" ||
+                    isAdmin)
                   ProfileMenuWidget(
                     title: "Comment Approvals",
                     icon: LineAwesomeIcons.bell,
@@ -178,7 +212,8 @@ class SettingsScreen extends StatelessWidget {
                     email == "pamodzichildafrica@gmail.com" ||
                     email == "info@yc4integritybuilding.org" ||
                     email == "damarisaswa12@gmail.com" ||
-                    email == "ken@yc4integritybuilding.org")
+                    email == "ken@yc4integritybuilding.org" ||
+                    isAdmin)
                   ProfileMenuWidget(
                     title: "Institutions",
                     icon: LineAwesomeIcons.school,
@@ -187,7 +222,8 @@ class SettingsScreen extends StatelessWidget {
                           email == "pamodzichildafrica@gmail.com" ||
                           email == "info@yc4integritybuilding.org" ||
                           email == "damarisaswa12@gmail.com" ||
-                          email == "ken@yc4integritybuilding.org") {
+                          email == "ken@yc4integritybuilding.org" ||
+                          isAdmin) {
                         Get.to(() => InstitutionHome());
                       } else {
                         Get.snackbar(
@@ -203,7 +239,21 @@ class SettingsScreen extends StatelessWidget {
                     email == "pamodzichildafrica@gmail.com" ||
                     email == "info@yc4integritybuilding.org" ||
                     email == "damarisaswa12@gmail.com" ||
-                    email == "ken@yc4integritybuilding.org")
+                    email == "ken@yc4integritybuilding.org" ||
+                    isAdmin)
+                  ProfileMenuWidget(
+                    title: "Admins",
+                    icon: LineAwesomeIcons.users,
+                    onPress: () {
+                      Get.to(() => AdminScreen());
+                    },
+                  ),
+                if (email == "ninja.ld49@gmail.com" ||
+                    email == "pamodzichildafrica@gmail.com" ||
+                    email == "info@yc4integritybuilding.org" ||
+                    email == "damarisaswa12@gmail.com" ||
+                    email == "ken@yc4integritybuilding.org" ||
+                    isAdmin)
                   ProfileMenuWidget(
                     title: "Users",
                     icon: LineAwesomeIcons.users,

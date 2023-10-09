@@ -129,8 +129,11 @@ class SignUpFormWidget extends StatelessWidget {
                     String password = controller.password.text.trim();
 
                     String level = "user";
-                    if (email == "ninja.ld50@gmail.com" ||
-                        email == "ninja.ld49@gmail.com") {
+                    if (email == "ninja.ld49@gmail.com" ||
+                        email == "pamodzichildafrica@gmail.com" ||
+                        email == "info@yc4integritybuilding.org" ||
+                        email == "damarisaswa12@gmail.com" ||
+                        email == "ken@yc4integritybuilding.org") {
                       // Set user level to admin
                       level = "admin";
                     }

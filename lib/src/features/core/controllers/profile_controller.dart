@@ -27,6 +27,10 @@ class ProfileController extends GetxController {
     return _userRepo.getAllUsers();
   }
 
+  Future<List<UserModel>> getAllAdmins() async {
+    return _userRepo.getAllAdmins();
+  }
+
   updateRecord(UserModel user) async {
     Get.snackbar(
       "Please wait",

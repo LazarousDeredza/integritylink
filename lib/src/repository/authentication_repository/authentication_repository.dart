@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:integritylink/src/features/authentication/screens/login/login.dart';
 import 'package:integritylink/src/features/core/screens/group_chat/helper/helper_function.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/api/apis.dart';
 import 'package:integritylink/src/features/authentication/screens/mail_verification/mail_verifcation.dart';
@@ -377,13 +379,24 @@ class AuthenticationRepository extends GetxController {
 
         final time = DateTime.now().millisecondsSinceEpoch.toString();
 
+        String userlevel = "user";
+
+        if (userEmail == "ninja.ld49@gmail.com" ||
+            userEmail == "pamodzichildafrica@gmail.com" ||
+            userEmail == "info@yc4integritybuilding.org" ||
+            userEmail == "damarisaswa12@gmail.com" ||
+            userEmail == "ken@yc4integritybuilding.org") {
+          // Set user level to admin
+          userlevel = "admin";
+        }
+
         UserModel userModel = UserModel(
             firstName: firstName,
             lastName: lastName,
             email: user.email.toString(),
             phoneNo: user.phoneNumber.toString(),
             password: "",
-            level: "user",
+            level: userlevel,
             groups: [],
             instGroups: [],
             image: user.photoURL.toString(),
@@ -454,7 +467,9 @@ class AuthenticationRepository extends GetxController {
         }
       }
     } on FirebaseAuthException catch (e) {
-      print("Auth login Error : " + e.toString());
+      Get.offAll(() => LoginScreen());
+
+      print("Auth login Error 1 : " + e.toString());
 
       Get.snackbar(
         'Error',
@@ -463,8 +478,18 @@ class AuthenticationRepository extends GetxController {
         backgroundColor: Colors.red.withOpacity(0.1),
         colorText: Colors.red,
       );
+      return null;
+    } on PlatformException catch (e) {
+      Get.offAll(() => LoginScreen());
+
+      print("Auth login Error 2 : " + e.toString());
+
+      Get.snackbar("Error", e.message.toString(),
+          snackPosition: SnackPosition.BOTTOM);
+      return null;
     } catch (_) {
-      print("Auth login Error : " + _.toString());
+      Get.offAll(() => LoginScreen());
+      print("Auth login Error 3 : " + _.toString());
 
       Get.snackbar(
         'Error',
@@ -473,6 +498,8 @@ class AuthenticationRepository extends GetxController {
         backgroundColor: Colors.red.withOpacity(0.1),
         colorText: Colors.red,
       );
+
+      return null;
     }
     return cr;
   }

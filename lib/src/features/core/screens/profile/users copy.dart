@@ -1,172 +1,162 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 import 'package:integritylink/main.dart';
-import 'package:integritylink/src/constants/image_strings.dart';
+import 'package:integritylink/src/constants/sizes.dart';
+import 'package:integritylink/src/features/authentication/models/user_model.dart';
+import 'package:integritylink/src/features/core/controllers/profile_controller.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+
+import '../../../../constants/image_strings.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
 
   @override
-  _UsersScreenState createState() => _UsersScreenState();
+  State<UsersScreen> createState() => _UsersScreenState();
 }
 
 class _UsersScreenState extends State<UsersScreen> {
-  final searchController = TextEditingController();
-  String searchQuery = "";
   String? docId = "";
+
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(ProfileController());
+
     return Scaffold(
       appBar: AppBar(
-        title: buildSearchBar(),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .where("level", isEqualTo: "user")
-            .where("id", isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return Center(child: Text("No users found"));
-
-          final users = getFilteredUsers(snapshot);
-
-          return ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              return buildUserTile(users[index]);
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget buildSearchBar() {
-    return TextField(
-      controller: searchController,
-      onChanged: onSearchChanged,
-      decoration: InputDecoration(
-        hintText: "Search...",
-        border: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        suffixIcon: IconButton(
-          icon: Icon(Icons.clear),
+        title: Text("Users", style: Theme.of(context).textTheme.titleLarge),
+        leading: IconButton(
+          icon: const Icon(LineAwesomeIcons.arrow_left),
           onPressed: () {
-            searchController.clear();
-            onSearchChanged('');
+            Navigator.pop(context);
           },
         ),
       ),
-    );
-  }
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.only(
+              top: tDefaultSize, bottom: tDefaultSize, left: 10, right: 10),
+          child: FutureBuilder<List<UserModel>>(
+            future: controller.getAllUsers(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      children: [
+                        ListTile(
+                          shape: ShapeBorder.lerp(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              10),
+                          leading: snapshot.data![index].image != null &&
+                                  snapshot.data![index].image
+                                          .toString()
+                                          .length >=
+                                      1
+                              ?
+                              //image from server
+                              SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.circular(mq.height * .1),
+                                    child: CachedNetworkImage(
+                                      fit: BoxFit.cover,
+                                      imageUrl: snapshot.data![index].image
+                                          .toString(),
+                                      errorWidget: (context, url, error) =>
+                                          const CircleAvatar(
+                                              child:
+                                                  Icon(CupertinoIcons.person)),
+                                    ),
+                                  ),
+                                )
+                              :
+                              //local image
+                              SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.circular(mq.height * .1),
+                                    child: Image(
+                                        image: AssetImage(tProfileImage),
+                                        fit: BoxFit.cover),
+                                  ),
+                                ),
+                          title: Text.rich(
+                            TextSpan(
+                              text: snapshot.data![index].firstName +
+                                  " " +
+                                  snapshot.data![index].lastName,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                snapshot.data![index].email,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                snapshot.data![index].phoneNo != "null"
+                                    ? snapshot.data![index].phoneNo
+                                    : "",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(
+                              LineAwesomeIcons.edit,
+                              color: Colors.blue,
+                            ),
+                            onPressed: () {
+                              _showoptionchoosedialog(context);
 
-  List<DocumentSnapshot> getFilteredUsers(AsyncSnapshot snapshot) {
-    return snapshot.data!.docs.where((user) => matchSearchTerm(user)).toList();
-  }
+                              docId = snapshot.data![index].id;
 
-  bool matchSearchTerm(DocumentSnapshot user) {
-    return user['name'].toLowerCase().contains(searchQuery) ||
-        user['email'].toLowerCase().contains(searchQuery) ||
-        user['phone'].toLowerCase().contains(searchQuery) ||
-        user['firstName'].toLowerCase().contains(searchQuery) ||
-        user['lastName'].toLowerCase().contains(searchQuery);
-  }
-
-  onSearchChanged(String query) {
-    setState(() {
-      searchQuery = query;
-    });
-  }
-
-  Widget buildUserTile(DocumentSnapshot user) {
-    return ListTile(
-      // title: Text(user['name']),
-      // subtitle: Text(user['email']),
-
-      shape: ShapeBorder.lerp(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          10),
-      leading: user['image'] != null && user['image'].toString().length >= 1
-          ?
-          //image from server
-          SizedBox(
-              width: 50,
-              height: 50,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(mq.height * .1),
-                child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: user['image'].toString(),
-                  errorWidget: (context, url, error) =>
-                      const CircleAvatar(child: Icon(CupertinoIcons.person)),
-                ),
-              ),
-            )
-          :
-          //local image
-          SizedBox(
-              width: 50,
-              height: 50,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(mq.height * .1),
-                child:
-                    Image(image: AssetImage(tProfileImage), fit: BoxFit.cover),
-              ),
-            ),
-      title: Text.rich(
-        TextSpan(
-          text: user['firstName'] + " " + user["lastName"],
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+                              print(
+                                "Email = " +
+                                    snapshot.data![index].email +
+                                    "\n Doc Id = " +
+                                    docId.toString(),
+                              );
+                            },
+                          ),
+                        ),
+                        Divider(),
+                      ],
+                    );
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            },
           ),
         ),
       ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            user["email"],
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            user["phone"] != "null" ? user["phone"] : "",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-      trailing: IconButton(
-        icon: Icon(
-          LineAwesomeIcons.edit,
-          color: Colors.blue,
-        ),
-        onPressed: () {
-          _showoptionchoosedialog(context);
-
-          docId = user["id"];
-
-          print(
-            "Email = " + user["email"] + "\n Doc Id = " + docId.toString(),
-          );
-        },
-      ),
     );
-  }
-
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
   }
 
   void _showoptionchoosedialog(BuildContext context) {
