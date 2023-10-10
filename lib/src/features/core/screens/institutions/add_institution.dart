@@ -162,11 +162,6 @@ class _AddInstitutionScreenState extends State<AddInstitutionScreen> {
                             child: Text("Add Institution"),
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                String email = controller.email.text.trim();
-
-                                if (email == "ninja.ld50@gmail.com" ||
-                                    email == "ninja.ld49@gmail.com") {}
-
                                 final time = DateTime.now()
                                     .millisecondsSinceEpoch
                                     .toString();

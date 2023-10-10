@@ -38,7 +38,7 @@ class OTPScreen extends StatelessWidget {
                 height: 40.0,
               ),
               Text(
-                "$tOtpMessage ninja.ld49@gmail.com",
+                "$tOtpMessage email",
                 textAlign: TextAlign.center,
               ),
               OtpTextField(
