@@ -87,6 +87,30 @@ class _ArticleScreenState extends State<ArticleScreen> {
         });
   }
 
+  bool isAdmin = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    //get current logged in user level
+    var level = FirebaseFirestore.instance
+        .collection("users")
+        .doc(AuthenticationRepository.instance.firebaseUser.value!.uid)
+        .get()
+        .then((value) {
+      if (value.data()!["level"] == "admin") {
+        setState(() {
+          isAdmin = true;
+        });
+      } else {
+        setState(() {
+          isAdmin = false;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var email = AuthenticationRepository.instance.firebaseUser.value!.email;
@@ -97,7 +121,8 @@ class _ArticleScreenState extends State<ArticleScreen> {
               email == "pamodzichildafrica@gmail.com" ||
               email == "info@yc4integritybuilding.org" ||
               email == "damarisaswa12@gmail.com" ||
-              email == "ken@yc4integritybuilding.org"
+              email == "ken@yc4integritybuilding.org" ||
+              isAdmin
           ? FloatingActionButton(
               onPressed: uploadDataToFirebase,
               child: Icon(Icons.add),

@@ -242,6 +242,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     email == "ken@yc4integritybuilding.org" ||
                     isAdmin)
                   ProfileMenuWidget(
+                    title: "Update Case",
+                    icon: LineAwesomeIcons.edit,
+                    onPress: () {
+                      if (email == "ninja.ld49@gmail.com" ||
+                          email == "pamodzichildafrica@gmail.com" ||
+                          email == "info@yc4integritybuilding.org" ||
+                          email == "damarisaswa12@gmail.com" ||
+                          email == "ken@yc4integritybuilding.org" ||
+                          isAdmin) {
+                        Get.to(() => AdminCaseListScreen());
+                      } else {
+                        Get.snackbar(
+                          "Permission Denied",
+                          "",
+                          icon: Icon(Icons.error),
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      }
+                    },
+                  ),
+                if (email == "ninja.ld49@gmail.com" ||
+                    email == "pamodzichildafrica@gmail.com" ||
+                    email == "info@yc4integritybuilding.org" ||
+                    email == "damarisaswa12@gmail.com" ||
+                    email == "ken@yc4integritybuilding.org" ||
+                    isAdmin)
+                  ProfileMenuWidget(
                     title: "Admins",
                     icon: LineAwesomeIcons.users,
                     onPress: () {
