@@ -50,6 +50,20 @@ class Dashboard extends StatelessWidget {
           ],
         ),
         backgroundColor: Color(0xfff5f7fa),
+        bottomNavigationBar: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), label: 'Settings'),
+            BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
+          ],
+          onTap: (int index) {
+            if (index == 0) {
+              Get.to(() => SettingsScreen());
+            } else {
+              _showConfirmationBottomSheet(context);
+            }
+          },
+        ),
         body: Column(
           children: [
             Stack(
@@ -193,7 +207,7 @@ class Dashboard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       DevicesGridDashboard(size: size),
-                      ScenesDashboard(),
+                      // ScenesDashboard(),
                     ],
                   ),
                 ),
@@ -203,6 +217,51 @@ class Dashboard extends StatelessWidget {
         ),
       );
     });
+  }
+
+  void _showConfirmationBottomSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure you want to logout?',
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Close the bottom sheet
+                      },
+                      child: Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        //  Perform logout action
+                        Navigator.pop(context);
+                        // Close the bottom sheet
+
+                        //logout
+                        AuthenticationRepository.instance.logout();
+                      },
+                      child: Text('Yes'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Container GradientContainer(Size size) {
