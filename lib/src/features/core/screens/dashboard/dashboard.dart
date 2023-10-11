@@ -370,7 +370,7 @@ class DevicesGridDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 3),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -549,7 +549,7 @@ CardField(
         onTap: onTap,
         child: SizedBox(
           height: size.height * .1,
-          width: size.width * .39,
+          width: size.width * .42,
           child: Center(
             child: ListTile(
               leading: CircleAvatar(
