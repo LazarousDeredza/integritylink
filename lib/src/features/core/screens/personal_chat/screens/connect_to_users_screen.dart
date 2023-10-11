@@ -4,87 +4,146 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:integritylink/main.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/api/apis.dart';
-import 'package:integritylink/src/features/core/screens/personal_chat/helper/dialogs.dart';
 import 'package:integritylink/src/constants/image_strings.dart';
-import 'package:integritylink/src/constants/sizes.dart';
 import 'package:integritylink/src/features/authentication/models/user_model.dart';
 import 'package:integritylink/src/features/core/controllers/profile_controller.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/models/chat_user.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/screens/chat_screen.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class ChatUsersScreen extends StatefulWidget {
-  const ChatUsersScreen({super.key});
-
   @override
-  State<ChatUsersScreen> createState() => _ChatUsersScreenState();
+  _ChatUsersScreenState createState() => _ChatUsersScreenState();
 }
 
 class _ChatUsersScreenState extends State<ChatUsersScreen> {
+  final controller = Get.put(ProfileController());
+  List<UserModel> allUsers = [];
+  List<UserModel> filteredUsers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadUsers();
+  }
+
+  Future<void> loadUsers() async {
+    List<UserModel> users = await controller.getAllUsers();
+    setState(() {
+      allUsers = users;
+      filteredUsers = users;
+    });
+  }
+
+  void filterUsers(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        filteredUsers =
+            List.from(allUsers); // If search query is empty, show all users
+      });
+    } else {
+      final lowerCaseQuery = query.toLowerCase();
+      setState(() {
+        filteredUsers = allUsers.where((user) {
+          return user.firstName.toLowerCase().contains(lowerCaseQuery) ||
+              user.lastName.toLowerCase().contains(lowerCaseQuery) ||
+              user.email.toLowerCase().contains(lowerCaseQuery) ||
+              user.name.toLowerCase().contains(lowerCaseQuery) ||
+              user.phoneNo.toLowerCase().contains(lowerCaseQuery);
+        }).toList();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ProfileController());
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "All Users",
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Colors.white,
-              ),
-        ),
-        leading: IconButton(
-          icon: Icon(
-            LineAwesomeIcons.arrow_left,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        title: Text("Users"),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: FloatingActionButton(
-            onPressed: () {
-              _addChatUserDialog();
-            },
-            child: const Icon(Icons.add_comment_rounded)),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.only(
-              top: tDefaultSize, bottom: tDefaultSize, left: 10, right: 10),
-          child: FutureBuilder<List<UserModel>>(
-            future: controller.getAllUsers(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        GestureDetector(
+      body: Container(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            SearchBar(
+              onChanged: (query) => filterUsers(query),
+            ),
+            SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                physics: BouncingScrollPhysics(),
+                itemCount: filteredUsers.length,
+                itemBuilder: (context, index) {
+                  UserModel userData = filteredUsers[index];
+                  return Column(
+                    children: [
+                      ListTile(
+                        shape: ShapeBorder.lerp(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            10),
+                        leading: userData.image != null &&
+                                userData.image.toString().length >= 1
+                            ?
+                            //image from server
+                            GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => ProfileImagePopup(
+                                      imageUrl: userData.image.toString(),
+                                    ),
+                                  );
+                                },
+                                child: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.circular(mq.height * .1),
+                                    child: CachedNetworkImage(
+                                      fit: BoxFit.cover,
+                                      imageUrl: userData.image.toString(),
+                                      errorWidget: (context, url, error) =>
+                                          const CircleAvatar(
+                                              child:
+                                                  Icon(CupertinoIcons.person)),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.circular(mq.height * .1),
+                                  child: Image(
+                                      image: AssetImage(tProfileImage),
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                        title: GestureDetector(
                           onTap: (() async {
-                            await APIs.addChatUser(snapshot.data![index].email)
+                            await APIs.addChatUser(userData.email)
                                 .then((value) {
                               print("Opening Conver");
                               ChatUser user = ChatUser(
-                                email: snapshot.data![index].email,
-                                firstName: snapshot.data![index].firstName,
-                                lastName: snapshot.data![index].lastName,
-                                phoneNo: snapshot.data![index].phoneNo,
-                                image: snapshot.data![index].image ?? '',
-                                about: snapshot.data![index].about,
-                                createdAt:
-                                    snapshot.data![index].createdAt ?? '',
-                                groups: snapshot.data![index].groups ?? [],
-                                id: snapshot.data![index].id ?? '',
-                                isOnline: snapshot.data![index].isOnline,
-                                lastActive: snapshot.data![index].lastActive,
-                                level: snapshot.data![index].level ?? '',
-                                name: snapshot.data![index].name,
-                                pushToken: snapshot.data![index].pushToken,
+                                email: userData.email,
+                                firstName: userData.firstName,
+                                lastName: userData.lastName,
+                                phoneNo: userData.phoneNo,
+                                image: userData.image ?? '',
+                                about: userData.about,
+                                createdAt: userData.createdAt ?? '',
+                                groups: userData.groups ?? [],
+                                id: userData.id ?? '',
+                                isOnline: userData.isOnline,
+                                lastActive: userData.lastActive,
+                                level: userData.level ?? '',
+                                name: userData.name,
+                                pushToken: userData.pushToken,
                               );
 
                               Get.to(
@@ -94,217 +153,183 @@ class _ChatUsersScreenState extends State<ChatUsersScreen> {
                               );
                             });
                             print(
-                              snapshot.data![index].email,
+                              userData.email,
                             );
                           }),
-                          child: ListTile(
-                            shape: ShapeBorder.lerp(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                10),
-                            leading: snapshot.data![index].image != null &&
-                                    snapshot.data![index].image
-                                            .toString()
-                                            .length >=
-                                        1
-                                ?
-                                //image from server
-                                SizedBox(
-                                    width: 50,
-                                    height: 50,
-                                    child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(mq.height * .1),
-                                      child: CachedNetworkImage(
-                                        fit: BoxFit.cover,
-                                        imageUrl: snapshot.data![index].image
-                                            .toString(),
-                                        errorWidget: (context, url, error) =>
-                                            const CircleAvatar(
-                                                child: Icon(
-                                                    CupertinoIcons.person)),
-                                      ),
-                                    ),
-                                  )
-                                :
-                                //local image
-                                SizedBox(
-                                    width: 50,
-                                    height: 50,
-                                    child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(mq.height * .1),
-                                      child: Image(
-                                          image: AssetImage(tProfileImage),
-                                          fit: BoxFit.cover),
-                                    ),
-                                  ),
-                            title: Text.rich(
-                              TextSpan(
-                                text: snapshot.data![index].firstName +
-                                    " " +
-                                    snapshot.data![index].lastName,
+                          child: Text.rich(
+                            TextSpan(
+                              text:
+                                  userData.firstName + " " + userData.lastName,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        subtitle: GestureDetector(
+                          onTap: (() async {
+                            await APIs.addChatUser(userData.email)
+                                .then((value) {
+                              print("Opening Conver");
+                              ChatUser user = ChatUser(
+                                email: userData.email,
+                                firstName: userData.firstName,
+                                lastName: userData.lastName,
+                                phoneNo: userData.phoneNo,
+                                image: userData.image ?? '',
+                                about: userData.about,
+                                createdAt: userData.createdAt ?? '',
+                                groups: userData.groups ?? [],
+                                id: userData.id ?? '',
+                                isOnline: userData.isOnline,
+                                lastActive: userData.lastActive,
+                                level: userData.level ?? '',
+                                name: userData.name,
+                                pushToken: userData.pushToken,
+                              );
+
+                              Get.to(
+                                () => ChatScreen(
+                                  user: user,
+                                ),
+                              );
+                            });
+                            print(
+                              userData.email,
+                            );
+                          }),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userData.email,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  snapshot.data![index].email,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              Text(
+                                userData.phoneNo != "null"
+                                    ? userData.phoneNo
+                                    : "",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                Text(
-                                  snapshot.data![index].phoneNo != "null"
-                                      ? snapshot.data![index].phoneNo
-                                      : "",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            trailing: IconButton(
-                              icon: Icon(
-                                Icons.message_rounded,
-                                color: Colors.blue,
                               ),
-                              onPressed: () async {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => UpdateProfileScreen(
-                                //       user: snapshot.data![index],
-                                //     ),
-                                //   ),
-                                // );
-
-                                await APIs.addChatUser(
-                                        snapshot.data![index].email)
-                                    .then((value) {
-                                  print("Opening Conver");
-                                  ChatUser user = ChatUser(
-                                    email: snapshot.data![index].email,
-                                    firstName: snapshot.data![index].firstName,
-                                    lastName: snapshot.data![index].lastName,
-                                    phoneNo: snapshot.data![index].phoneNo,
-                                    image: snapshot.data![index].image ?? '',
-                                    about: snapshot.data![index].about,
-                                    createdAt:
-                                        snapshot.data![index].createdAt ?? '',
-                                    groups: snapshot.data![index].groups ?? [],
-                                    id: snapshot.data![index].id ?? '',
-                                    isOnline: snapshot.data![index].isOnline,
-                                    lastActive:
-                                        snapshot.data![index].lastActive,
-                                    level: snapshot.data![index].level ?? '',
-                                    name: snapshot.data![index].name,
-                                    pushToken: snapshot.data![index].pushToken,
-                                  );
-
-                                  Get.to(
-                                    () => ChatScreen(
-                                      user: user,
-                                    ),
-                                  );
-                                });
-                                print(
-                                  snapshot.data![index].email,
-                                );
-                              },
-                            ),
+                            ],
                           ),
                         ),
-                        Divider(),
-                      ],
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          ),
+                        trailing: IconButton(
+                          icon: Icon(
+                            Icons.message_rounded,
+                            color: Colors.blue,
+                          ),
+                          onPressed: () async {
+                            await APIs.addChatUser(userData.email)
+                                .then((value) {
+                              print("Opening Conver");
+                              ChatUser user = ChatUser(
+                                email: userData.email,
+                                firstName: userData.firstName,
+                                lastName: userData.lastName,
+                                phoneNo: userData.phoneNo,
+                                image: userData.image ?? '',
+                                about: userData.about,
+                                createdAt: userData.createdAt ?? '',
+                                groups: userData.groups ?? [],
+                                id: userData.id ?? '',
+                                isOnline: userData.isOnline,
+                                lastActive: userData.lastActive,
+                                level: userData.level ?? '',
+                                name: userData.name,
+                                pushToken: userData.pushToken,
+                              );
+
+                              Get.to(
+                                () => ChatScreen(
+                                  user: user,
+                                ),
+                              );
+                            });
+                            print(
+                              userData.email,
+                            );
+                          },
+                        ),
+                      ),
+                      Divider(),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  // for adding new chat user
-  void _addChatUserDialog() {
-    String email = '';
+class SearchBar extends StatefulWidget {
+  final Function(String) onChanged;
 
-    showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-              contentPadding: const EdgeInsets.only(
-                  left: 24, right: 24, top: 20, bottom: 10),
+  SearchBar({required this.onChanged});
 
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+  @override
+  _SearchBarState createState() => _SearchBarState();
+}
 
-              //title
-              title: const Row(
-                children: [
-                  Icon(
-                    Icons.person_add,
-                    color: Colors.blue,
-                    size: 28,
-                  ),
-                  Text('  Add User')
-                ],
-              ),
+class _SearchBarState extends State<SearchBar> {
+  TextEditingController _searchController = TextEditingController();
 
-              //content
-              content: TextFormField(
-                maxLines: null,
-                onChanged: (value) => email = value,
-                decoration: InputDecoration(
-                    hintText: 'Email ID',
-                    prefixIcon: const Icon(Icons.email, color: Colors.blue),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15))),
-              ),
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
-              //actions
-              actions: [
-                //cancel button
-                MaterialButton(
-                    onPressed: () {
-                      //hide alert dialog
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel',
-                        style: TextStyle(color: Colors.blue, fontSize: 16))),
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _searchController,
+      onChanged: widget.onChanged,
+      maxLines: 1,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontSize: 16,
+          ),
+      decoration: InputDecoration(
+        labelText: 'Search User',
+        prefixIcon: Icon(Icons.search),
+        //rounded border
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
 
-                //add button
-                MaterialButton(
-                    onPressed: () async {
-                      //hide alert dialog
-                      Navigator.pop(context);
-                      if (email.isNotEmpty) {
-                        await APIs.addChatUser(email).then((value) {
-                          if (!value) {
-                            Dialogs.showSnackbar(
-                                context, 'User does not Exists!');
-                          }
-                        });
-                      }
-                    },
-                    child: const Text(
-                      'Add',
-                      style: TextStyle(color: Colors.blue, fontSize: 16),
-                    ))
-              ],
-            ));
+        suffixIcon: _searchController.text.isNotEmpty
+            ? IconButton(
+                icon: Icon(Icons.clear),
+                onPressed: () {
+                  setState(() {
+                    _searchController.clear();
+                    widget.onChanged('');
+                  });
+                },
+              )
+            : null,
+      ),
+    );
+  }
+}
+
+class ProfileImagePopup extends StatelessWidget {
+  final String imageUrl;
+
+  const ProfileImagePopup({required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+        child: CachedNetworkImage(
+      imageUrl: imageUrl,
+    ));
   }
 }
