@@ -50,20 +50,20 @@ class Dashboard extends StatelessWidget {
           ],
         ),
         backgroundColor: Color(0xfff5f7fa),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: 'Settings'),
-            BottomNavigationBarItem(icon: Icon(Icons.logout), label: 'Logout'),
-          ],
-          onTap: (int index) {
-            if (index == 0) {
-              Get.to(() => SettingsScreen());
-            } else {
-              _showConfirmationBottomSheet(context);
-            }
-          },
-        ),
+        // bottomNavigationBar: BottomNavigationBar(
+        //   items: [
+        //     BottomNavigationBarItem(
+        //         icon: Icon(Icons.settings), label: 'Settings'),
+        //     BottomNavigationBarItem(icon: Icon(Icons.logout), label: "Logout"),
+        //   ],
+        //   onTap: (int index) {
+        //     if (index == 0) {
+        //       Get.to(() => SettingsScreen());
+        //     } else {
+        //       _showConfirmationBottomSheet(context);
+        //     }
+        //   },
+        // ),
         body: Column(
           children: [
             Stack(
@@ -207,7 +207,7 @@ class Dashboard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       DevicesGridDashboard(size: size),
-                      // ScenesDashboard(),
+                      ScenesDashboard(),
                     ],
                   ),
                 ),
