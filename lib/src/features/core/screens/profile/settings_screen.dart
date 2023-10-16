@@ -7,6 +7,8 @@ import 'package:integritylink/src/constants/sizes.dart';
 import 'package:integritylink/src/constants/text_strings.dart';
 import 'package:integritylink/src/features/core/screens/about/about_screen.dart';
 import 'package:integritylink/src/features/core/screens/cases/admin/admin_cases_list.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/admin/club_list_to_approve.dart';
+import 'package:integritylink/src/features/core/screens/dashboard/dashboard.dart';
 import 'package:integritylink/src/features/core/screens/data_screen/admin_section/admin_data.dart';
 import 'package:integritylink/src/features/core/screens/education_screens/articles/admin/article_list_admin.dart';
 import 'package:integritylink/src/features/core/screens/institutions/Institutions_list_home.dart';
@@ -94,228 +96,249 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Container(
-            padding: EdgeInsets.only(
-                left: tDefaultSize,
-                right: tDefaultSize,
-                bottom: tDefaultSize,
-                top: 8),
-            child: Column(
-              children: [
-                Stack(
-                  children: [
-                    SizedBox(
-                      width: 120,
-                      height: 120,
-                      child: CircleAvatar(
-                        backgroundImage: AssetImage(tProfileImage),
+      body: WillPopScope(
+        onWillPop: () async {
+          Get.offAll(
+            () => Dashboard(),
+          );
+          return true;
+        },
+        child: SingleChildScrollView(
+          child: Center(
+            child: Container(
+              padding: EdgeInsets.only(
+                  left: tDefaultSize,
+                  right: tDefaultSize,
+                  bottom: tDefaultSize,
+                  top: 8),
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      SizedBox(
+                        width: 120,
+                        height: 120,
+                        child: CircleAvatar(
+                          backgroundImage: AssetImage(tProfileImage),
+                        ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: tPrimaryColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            width: 4,
-                            color: Theme.of(context).scaffoldBackgroundColor,
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: tPrimaryColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 4,
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                            ),
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(
+                                () => UpdateProfileScreen(),
+                              );
+                            },
+                            child: const Icon(
+                              LineAwesomeIcons.pen,
+                              color: tDarkColor,
+                            ),
                           ),
                         ),
-                        child: GestureDetector(
-                          onTap: () {
-                            Get.to(
-                              () => UpdateProfileScreen(),
-                            );
-                          },
-                          child: const Icon(
-                            LineAwesomeIcons.pen,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    tProfileHeading,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  Text(
+                    tProfileSubHeading,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Get.to(
+                            () => UpdateProfileScreen(),
+                          );
+                        },
+                        child: const Text(
+                          "View Profile",
+                          style: TextStyle(
                             color: tDarkColor,
                           ),
                         ),
-                      ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: tPrimaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        )),
+                  ),
+                  const SizedBox(height: 10),
+                  const Divider(),
+                  const SizedBox(height: 8),
+                  //menu
+
+                  ProfileMenuWidget(
+                    title: tMenu3,
+                    icon: LineAwesomeIcons.question_circle,
+                    onPress: () {
+                      Get.to(() => AboutScreen());
+                    },
+                  ),
+                  if (email == "ninja.ld49@gmail.com" ||
+                      email == "pamodzichildafrica@gmail.com" ||
+                      email == "info@yc4integritybuilding.org" ||
+                      email == "damarisaswa12@gmail.com" ||
+                      email == "ken@yc4integritybuilding.org" ||
+                      isAdmin)
+                    Center(
+                      child: Text("Adminstrative"),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  tProfileHeading,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                Text(
-                  tProfileSubHeading,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: 150,
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Get.to(
-                          () => UpdateProfileScreen(),
-                        );
+                  if (email == "ninja.ld49@gmail.com" ||
+                      email == "pamodzichildafrica@gmail.com" ||
+                      email == "info@yc4integritybuilding.org" ||
+                      email == "damarisaswa12@gmail.com" ||
+                      email == "ken@yc4integritybuilding.org" ||
+                      isAdmin)
+                    ProfileMenuWidget(
+                      title: "Club Creation Approvals",
+                      icon: LineAwesomeIcons.bell,
+                      onPress: () {
+                        Get.to(() => ClubListScreenForApprove());
                       },
-                      child: const Text(
-                        "View Profile",
-                        style: TextStyle(
-                          color: tDarkColor,
-                        ),
+                    ),
+                  if (email == "ninja.ld49@gmail.com" ||
+                      email == "pamodzichildafrica@gmail.com" ||
+                      email == "info@yc4integritybuilding.org" ||
+                      email == "damarisaswa12@gmail.com" ||
+                      email == "ken@yc4integritybuilding.org" ||
+                      isAdmin)
+                    ProfileMenuWidget(
+                      title: "Comment Approvals",
+                      icon: LineAwesomeIcons.bell,
+                      onPress: () {
+                        _showApprovalChooseDialogBottomSheet(context);
+                      },
+                    ),
+
+                  if (email == "ninja.ld49@gmail.com" ||
+                      email == "pamodzichildafrica@gmail.com" ||
+                      email == "info@yc4integritybuilding.org" ||
+                      email == "damarisaswa12@gmail.com" ||
+                      email == "ken@yc4integritybuilding.org" ||
+                      isAdmin)
+                    ProfileMenuWidget(
+                      title: "Institutions",
+                      icon: LineAwesomeIcons.school,
+                      onPress: () {
+                        if (email == "ninja.ld49@gmail.com" ||
+                            email == "pamodzichildafrica@gmail.com" ||
+                            email == "info@yc4integritybuilding.org" ||
+                            email == "damarisaswa12@gmail.com" ||
+                            email == "ken@yc4integritybuilding.org" ||
+                            isAdmin) {
+                          Get.to(() => InstitutionHome());
+                        } else {
+                          Get.snackbar(
+                            "Permission Denied",
+                            "",
+                            icon: Icon(Icons.error),
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        }
+                      },
+                    ),
+                  if (email == "ninja.ld49@gmail.com" ||
+                      email == "pamodzichildafrica@gmail.com" ||
+                      email == "info@yc4integritybuilding.org" ||
+                      email == "damarisaswa12@gmail.com" ||
+                      email == "ken@yc4integritybuilding.org" ||
+                      isAdmin)
+                    ProfileMenuWidget(
+                      title: "Update Case",
+                      icon: LineAwesomeIcons.edit,
+                      onPress: () {
+                        if (email == "ninja.ld49@gmail.com" ||
+                            email == "pamodzichildafrica@gmail.com" ||
+                            email == "info@yc4integritybuilding.org" ||
+                            email == "damarisaswa12@gmail.com" ||
+                            email == "ken@yc4integritybuilding.org" ||
+                            isAdmin) {
+                          Get.to(() => AdminCaseListScreen());
+                        } else {
+                          Get.snackbar(
+                            "Permission Denied",
+                            "",
+                            icon: Icon(Icons.error),
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        }
+                      },
+                    ),
+                  if (email == "ninja.ld49@gmail.com" ||
+                      email == "pamodzichildafrica@gmail.com" ||
+                      email == "info@yc4integritybuilding.org" ||
+                      email == "damarisaswa12@gmail.com" ||
+                      email == "ken@yc4integritybuilding.org" ||
+                      isAdmin)
+                    ProfileMenuWidget(
+                      title: "Admins",
+                      icon: LineAwesomeIcons.users,
+                      onPress: () {
+                        Get.to(() => AdminScreen());
+                      },
+                    ),
+                  if (email == "ninja.ld49@gmail.com" ||
+                      email == "pamodzichildafrica@gmail.com" ||
+                      email == "info@yc4integritybuilding.org" ||
+                      email == "damarisaswa12@gmail.com" ||
+                      email == "ken@yc4integritybuilding.org" ||
+                      isAdmin)
+                    ProfileMenuWidget(
+                      title: "Users",
+                      icon: LineAwesomeIcons.users,
+                      onPress: () {
+                        Get.to(() => UsersScreen());
+                      },
+                    ),
+                  const SizedBox(height: 10),
+                  const Divider(),
+                  const SizedBox(height: 5),
+
+                  ProfileMenuWidget(
+                    title: tMenu5,
+                    icon: LineAwesomeIcons.alternate_sign_out,
+                    onPress: () {
+                      _showConfirmationBottomSheet(context);
+                    },
+                    endIcon: false,
+                    textColor: Colors.red,
+                  ),
+                  const SizedBox(height: 35),
+                  const Divider(),
+                  SizedBox(
+                    width: 150,
+                    child: const Text(
+                      "Version : 1.0.0",
+                      style: TextStyle(
+                        color: Colors.lightBlue,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 15.0,
+                        letterSpacing: 1.0,
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: tPrimaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      )),
-                ),
-                const SizedBox(height: 10),
-                const Divider(),
-                const SizedBox(height: 8),
-                //menu
-
-                ProfileMenuWidget(
-                  title: tMenu3,
-                  icon: LineAwesomeIcons.question_circle,
-                  onPress: () {
-                    Get.to(() => AboutScreen());
-                  },
-                ),
-                if (email == "ninja.ld49@gmail.com" ||
-                    email == "pamodzichildafrica@gmail.com" ||
-                    email == "info@yc4integritybuilding.org" ||
-                    email == "damarisaswa12@gmail.com" ||
-                    email == "ken@yc4integritybuilding.org" ||
-                    isAdmin)
-                  Center(
-                    child: Text("Adminstrative"),
-                  ),
-                if (email == "ninja.ld49@gmail.com" ||
-                    email == "pamodzichildafrica@gmail.com" ||
-                    email == "info@yc4integritybuilding.org" ||
-                    email == "damarisaswa12@gmail.com" ||
-                    email == "ken@yc4integritybuilding.org" ||
-                    isAdmin)
-                  ProfileMenuWidget(
-                    title: "Comment Approvals",
-                    icon: LineAwesomeIcons.bell,
-                    onPress: () {
-                      _showApprovalChooseDialogBottomSheet(context);
-                    },
-                  ),
-
-                if (email == "ninja.ld49@gmail.com" ||
-                    email == "pamodzichildafrica@gmail.com" ||
-                    email == "info@yc4integritybuilding.org" ||
-                    email == "damarisaswa12@gmail.com" ||
-                    email == "ken@yc4integritybuilding.org" ||
-                    isAdmin)
-                  ProfileMenuWidget(
-                    title: "Institutions",
-                    icon: LineAwesomeIcons.school,
-                    onPress: () {
-                      if (email == "ninja.ld49@gmail.com" ||
-                          email == "pamodzichildafrica@gmail.com" ||
-                          email == "info@yc4integritybuilding.org" ||
-                          email == "damarisaswa12@gmail.com" ||
-                          email == "ken@yc4integritybuilding.org" ||
-                          isAdmin) {
-                        Get.to(() => InstitutionHome());
-                      } else {
-                        Get.snackbar(
-                          "Permission Denied",
-                          "",
-                          icon: Icon(Icons.error),
-                          snackPosition: SnackPosition.BOTTOM,
-                        );
-                      }
-                    },
-                  ),
-                if (email == "ninja.ld49@gmail.com" ||
-                    email == "pamodzichildafrica@gmail.com" ||
-                    email == "info@yc4integritybuilding.org" ||
-                    email == "damarisaswa12@gmail.com" ||
-                    email == "ken@yc4integritybuilding.org" ||
-                    isAdmin)
-                  ProfileMenuWidget(
-                    title: "Update Case",
-                    icon: LineAwesomeIcons.edit,
-                    onPress: () {
-                      if (email == "ninja.ld49@gmail.com" ||
-                          email == "pamodzichildafrica@gmail.com" ||
-                          email == "info@yc4integritybuilding.org" ||
-                          email == "damarisaswa12@gmail.com" ||
-                          email == "ken@yc4integritybuilding.org" ||
-                          isAdmin) {
-                        Get.to(() => AdminCaseListScreen());
-                      } else {
-                        Get.snackbar(
-                          "Permission Denied",
-                          "",
-                          icon: Icon(Icons.error),
-                          snackPosition: SnackPosition.BOTTOM,
-                        );
-                      }
-                    },
-                  ),
-                if (email == "ninja.ld49@gmail.com" ||
-                    email == "pamodzichildafrica@gmail.com" ||
-                    email == "info@yc4integritybuilding.org" ||
-                    email == "damarisaswa12@gmail.com" ||
-                    email == "ken@yc4integritybuilding.org" ||
-                    isAdmin)
-                  ProfileMenuWidget(
-                    title: "Admins",
-                    icon: LineAwesomeIcons.users,
-                    onPress: () {
-                      Get.to(() => AdminScreen());
-                    },
-                  ),
-                if (email == "ninja.ld49@gmail.com" ||
-                    email == "pamodzichildafrica@gmail.com" ||
-                    email == "info@yc4integritybuilding.org" ||
-                    email == "damarisaswa12@gmail.com" ||
-                    email == "ken@yc4integritybuilding.org" ||
-                    isAdmin)
-                  ProfileMenuWidget(
-                    title: "Users",
-                    icon: LineAwesomeIcons.users,
-                    onPress: () {
-                      Get.to(() => UsersScreen());
-                    },
-                  ),
-                const SizedBox(height: 10),
-                const Divider(),
-                const SizedBox(height: 5),
-
-                ProfileMenuWidget(
-                  title: tMenu5,
-                  icon: LineAwesomeIcons.alternate_sign_out,
-                  onPress: () {
-                    _showConfirmationBottomSheet(context);
-                  },
-                  endIcon: false,
-                  textColor: Colors.red,
-                ),
-                const SizedBox(height: 35),
-                const Divider(),
-                SizedBox(
-                  width: 150,
-                  child: const Text(
-                    "Version : 1.0.0",
-                    style: TextStyle(
-                      color: Colors.lightBlue,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 15.0,
-                      letterSpacing: 1.0,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

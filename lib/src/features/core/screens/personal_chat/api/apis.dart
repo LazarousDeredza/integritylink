@@ -9,7 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
 
 import '../models/chat_user.dart';
 import '../models/message.dart';
@@ -277,6 +277,62 @@ class APIs {
             });
   }
 
+  // update profile picture of user
+  static Future<void> updateGroupProfilePicture(
+      File file, String groupID) async {
+    Get.snackbar(
+      "Updating",
+      "Changing Group Profile Picture",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green,
+    );
+    //getting image file extension
+    final ext = file.path.split('.').last;
+    log('Extension: $ext');
+
+    //storage file ref with path
+    final ref = storage.ref().child('group_profile_pictures/${user.uid}.$ext');
+
+    //uploading image
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .then((p0) {
+      log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
+    });
+
+    //updating image in firestore database
+    me.image = await ref.getDownloadURL();
+    await firestore
+        .collection('groups1')
+        .doc(groupID)
+        .update({'groupIcon': me.image})
+        .then((value) => () {
+              log('Profile Picture Updated');
+              Get.snackbar(
+                "Success",
+                "Profile Picture Updated",
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.green,
+              );
+            })
+        .onError((error, stackTrace) => () {
+              log('Profile Picture Update Failed');
+              Get.snackbar(
+                "Failed",
+                "Profile Picture Update Failed",
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.red,
+              );
+            });
+    Get.snackbar(
+      "Success",
+      "Profile Picture Updated",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green,
+    );
+    //Get.back();
+  }
+
   // for getting specific user info
   static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
       ChatUser chatUser) {
@@ -391,5 +447,93 @@ class APIs {
         .collection('chats/${getConversationID(message.toId)}/messages/')
         .doc(message.sent)
         .update({'msg': updatedMsg});
+  }
+
+  static Future<void> updateGroupPurpose(
+      String groupPurpose, String groupId) async {
+    await firestore
+        .collection('groups1')
+        .doc(groupId)
+        .update({'groupPurpose': groupPurpose}).then((value) => () {
+              //show snackbar
+              Get.snackbar(
+                "Success",
+                "Group Purpose Updated",
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.green,
+              );
+            });
+  }
+
+  static Future<void> updateGroupName(
+      String groupName, String groupId, String oldgroupName) async {
+    //print group id
+    print("Group id for group name change : " + groupId);
+    await firestore
+        .collection('groups1')
+        .doc(groupId)
+        .update({'groupName': groupName}).then((value) => () {
+              print("Group name updated");
+            });
+
+//update collection users
+    await firestore
+        .collection('users')
+        .where('groups', arrayContains: groupId + "_" + oldgroupName)
+        .get()
+        .then((value) => value.docs.forEach((element) {
+              firestore.collection('users').doc(element.id).update({
+                'groups': FieldValue.arrayRemove([groupId + "_" + oldgroupName])
+              });
+              firestore.collection('users').doc(element.id).update({
+                'groups': FieldValue.arrayUnion([groupId + "_" + groupName])
+              });
+            }));
+    //show snackbar
+    Get.snackbar(
+      "Success",
+      "Group Name Updated",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green,
+    );
+  }
+
+  static removeMember(String groupId, data, String groupName) async {
+    String userId = data.substring(0, data.indexOf("_"));
+    print(" User Id = " + userId);
+    await firestore.collection('groups1').doc(groupId).update({
+      'members': FieldValue.arrayRemove([data])
+    });
+    await firestore.collection('users').doc(userId).update({
+      'groups': FieldValue.arrayRemove([groupId + "_" + groupName])
+    }).then((value) => () {
+          Get.snackbar(
+            "Success",
+            "Member Removed",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+          );
+        });
+  }
+
+  static Future<void> deleteGroup(String groupId, String groupName) async {
+    await firestore.collection('groups1').doc(groupId).delete();
+    await firestore
+        .collection('users')
+        .where('groups', arrayContains: groupId + "_" + groupName)
+        .get()
+        .then((value) => value.docs.forEach((element) {
+              firestore.collection('users').doc(element.id).update({
+                'groups': FieldValue.arrayRemove([groupId + "_" + groupName])
+              });
+            }));
+
+    //toast
+    Get.snackbar(
+      "Success",
+      "Club Deleted",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.green,
+    );
   }
 }

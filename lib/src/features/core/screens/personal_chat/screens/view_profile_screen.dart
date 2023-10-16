@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:integritylink/src/constants/image_strings.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
 
 import '../helper/my_date_util.dart';
 import '../../../../../../main.dart';

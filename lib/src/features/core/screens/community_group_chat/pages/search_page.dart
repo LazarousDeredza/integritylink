@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:integritylink/src/constants/colors.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/controller/community_group_controller.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/helper/helper_function.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/controller/community_group_controller.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);

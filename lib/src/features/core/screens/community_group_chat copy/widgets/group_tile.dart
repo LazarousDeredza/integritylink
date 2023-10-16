@@ -1,12 +1,13 @@
-import 'package:integritylink/src/features/core/screens/group_chat/pages/chat_page.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/widgets/widgets.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/chat_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/pages/chat_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
-class GroupTile extends StatefulWidget {
+class GroupTiletest extends StatefulWidget {
   final String userName;
   final String groupId;
   final String groupName;
-  const GroupTile(
+  const GroupTiletest(
       {Key? key,
       required this.groupId,
       required this.groupName,
@@ -14,17 +15,17 @@ class GroupTile extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<GroupTile> createState() => _GroupTileState();
+  State<GroupTiletest> createState() => _GroupTiletestState();
 }
 
-class _GroupTileState extends State<GroupTile> {
+class _GroupTiletestState extends State<GroupTiletest> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         nextScreen(
             context,
-            ChatPage(
+            ChatPagetest(
               groupId: widget.groupId,
               groupName: widget.groupName,
               userName: widget.userName,

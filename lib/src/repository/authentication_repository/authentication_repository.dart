@@ -7,7 +7,7 @@ import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:integritylink/src/features/authentication/screens/login/login.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/api/apis.dart';
 import 'package:integritylink/src/features/authentication/screens/mail_verification/mail_verifcation.dart';
 import 'package:integritylink/src/features/authentication/screens/splash_screen/splash_screen.dart';

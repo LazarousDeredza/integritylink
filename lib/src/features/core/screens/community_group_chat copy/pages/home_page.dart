@@ -1,50 +1,63 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:integritylink/src/constants/sizes.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/search_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/widgets/group_tile.dart';
 import 'package:integritylink/src/features/core/screens/dashboard/dashboard.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/pages/search_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/service/auth_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/widgets/group_tile.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/pages/home_page.dart';
-
-import 'package:integritylink/src/features/core/screens/institutional_group_chat/helper/helper_function.dart';
-import 'package:integritylink/src/features/core/screens/institutional_group_chat/pages/search_page.dart';
-import 'package:integritylink/src/features/core/screens/institutional_group_chat/service/auth_service.dart';
-import 'package:integritylink/src/features/core/screens/institutional_group_chat/service/database_service.dart';
-import 'package:integritylink/src/features/core/screens/institutional_group_chat/widgets/group_tile.dart';
-import 'package:integritylink/src/features/core/screens/institutional_group_chat/widgets/widgets.dart';
-import 'package:integritylink/src/features/core/screens/institutions/inst_model.dart';
-import 'package:integritylink/src/features/core/screens/institutions/institution_controller.dart';
+import 'package:integritylink/src/features/core/screens/institutional_group_chat/pages/home_page.dart';
 import 'package:integritylink/src/features/core/screens/profile/update_profile.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 
-class InstututionalHomeGroupScreen extends StatefulWidget {
-  const InstututionalHomeGroupScreen({Key? key}) : super(key: key);
+class CommunityGroupHomePagetest extends StatefulWidget {
+  const CommunityGroupHomePagetest({Key? key}) : super(key: key);
 
   @override
-  State<InstututionalHomeGroupScreen> createState() =>
-      _InstututionalHomeGroupScreenState();
+  State<CommunityGroupHomePagetest> createState() =>
+      _CommunityGroupHomePagetestState();
 }
 
-class _InstututionalHomeGroupScreenState
-    extends State<InstututionalHomeGroupScreen> {
-  final controller = Get.put(InstitutionController());
+class _CommunityGroupHomePagetestState
+    extends State<CommunityGroupHomePagetest> {
+  bool isAdmin = false;
 
   String userName = "";
   String email = "";
   AuthService authService = AuthService();
   Stream? groups;
   bool _isLoading = false;
+
   String groupName = "";
-
-  List<String> dropdownItems = ['Select School']; // List of dropdown items
-
-  String? selectedValue;
+  String groupPurpose = "";
+  String targetAudience = "";
 
   @override
   void initState() {
     super.initState();
     gettingUserData();
 
-    getInstitutions();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(AuthenticationRepository.instance.firebaseUser.value!.uid)
+        .get()
+        .then((value) {
+      if (value.data()!["level"] == "admin") {
+        setState(() {
+          isAdmin = true;
+        });
+      } else {
+        setState(() {
+          isAdmin = false;
+        });
+      }
+    });
   }
 
   // string manipulation
@@ -57,38 +70,27 @@ class _InstututionalHomeGroupScreenState
   }
 
   gettingUserData() async {
-    await HelperFunctions.getUserEmailFromSF().then((value) {
+    await CommunityGroupHelperFunctions.getUserEmailFromSF().then((value) {
       setState(() {
         email = value!;
         print('Email' + email);
       });
     });
-    await HelperFunctions.getUserNameFromSF().then((val) {
+    await CommunityGroupHelperFunctions.getUserNameFromSF().then((val) {
       setState(() {
         userName = val!;
         print('Username' + userName);
       });
     });
     // getting the list of snapshots in our stream
-    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+    await DatabaseServicetest(uid: FirebaseAuth.instance.currentUser!.uid)
         .getUserGroups()
         .then((snapshot) {
-      // print("Uid >>" + FirebaseAuth.instance.currentUser!.uid);
-      // print("snapshop" + snapshot.toString());
+      print("Uid >>" + FirebaseAuth.instance.currentUser!.uid);
+      print("snapshop : " + snapshot.toString());
       setState(() {
         groups = snapshot;
       });
-    });
-  }
-
-  void getInstitutions() async {
-    Future<List<InstModel>> schools = controller.getSchools();
-    schools.then((value) {
-      // Remove duplicates from the list
-      if (value.isNotEmpty) {
-        dropdownItems = value.map((e) => e.name).toSet().toList();
-      }
-      selectedValue = (dropdownItems.isNotEmpty ? dropdownItems[0] : null);
     });
   }
 
@@ -106,7 +108,7 @@ class _InstututionalHomeGroupScreenState
           actions: [
             IconButton(
                 onPressed: () {
-                  nextScreen(context, const SearchPage());
+                  nextScreen(context, const SearchPagetest());
                 },
                 icon: const Icon(
                   Icons.search,
@@ -116,7 +118,7 @@ class _InstututionalHomeGroupScreenState
           centerTitle: true,
           backgroundColor: Theme.of(context).primaryColor,
           title: const Text(
-            "Institutional Clubs",
+            "Community Clubs Test",
             style: TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
           ),
@@ -151,9 +153,7 @@ class _InstututionalHomeGroupScreenState
                     ListTile(
                       onTap: () {
                         //close drawer
-                        Get.to(
-                          () => CommunityGroupHomePage(),
-                        );
+                        Navigator.pop(context);
                       },
                       selectedColor: Theme.of(context).primaryColor,
                       selected: true,
@@ -172,6 +172,7 @@ class _InstututionalHomeGroupScreenState
                       onTap: () {
                         //close drawer
                         Navigator.pop(context);
+                        Get.to(() => InstututionalHomeGroupScreen());
                       },
                       selectedColor: Theme.of(context).primaryColor,
                       selected: true,
@@ -292,77 +293,108 @@ class _InstututionalHomeGroupScreenState
         builder: (context) {
           return StatefulBuilder(builder: ((context, setState) {
             return AlertDialog(
-              title: const Text(
+              title: Text(
                 "Create a club",
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _isLoading == true
-                      ? Center(
-                          child: CircularProgressIndicator(
-                              color: Theme.of(context).primaryColor),
-                        )
-                      : Column(
-                          children: [
-                            TextField(
-                              onChanged: (val) {
-                                setState(() {
-                                  groupName = val;
-                                });
-                              },
-                              style: Theme.of(context).textTheme.headlineMedium,
-                              decoration: InputDecoration(
-                                  hintText: 'Club name',
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color:
-                                              Theme.of(context).primaryColor),
-                                      borderRadius: BorderRadius.circular(20)),
-                                  errorBorder: OutlineInputBorder(
-                                      borderSide:
-                                          const BorderSide(color: Colors.red),
-                                      borderRadius: BorderRadius.circular(20)),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color:
-                                              Theme.of(context).primaryColor),
-                                      borderRadius: BorderRadius.circular(20))),
-                            ),
-                            SizedBox(
-                              height: tFormHeight - 20,
-                            ),
-                            // Dropdown button
-                            DropdownButtonFormField<String>(
-                              value: selectedValue,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  selectedValue = newValue.toString();
-                                  print(selectedValue);
-                                });
-                              },
-                              items: dropdownItems.map((String item) {
-                                return DropdownMenuItem<String>(
-                                  value: item,
-                                  child: Text(item),
-                                );
-                              }).toList(),
-                              validator: (value) {
-                                if (value == null ||
-                                    value.isEmpty ||
-                                    value == 'Select School') {
-                                  return 'Please select an institution';
-                                }
-                                return null;
-                              },
-                            ),
-                          ],
-                        ),
-                  SizedBox(
-                    height: tFormHeight - 20,
-                  ),
-                ],
+              content: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _isLoading == true
+                        ? Center(
+                            child: CircularProgressIndicator(
+                                color: Theme.of(context).primaryColor),
+                          )
+                        : TextField(
+                            onChanged: (val) {
+                              setState(() {
+                                groupName = val;
+                              });
+                            },
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.normal,
+                                ),
+                            maxLines: 1,
+                            maxLength: 35,
+                            decoration: InputDecoration(
+                                hintText: 'Club name',
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context).primaryColor),
+                                    borderRadius: BorderRadius.circular(20)),
+                                errorBorder: OutlineInputBorder(
+                                    borderSide:
+                                        const BorderSide(color: Colors.red),
+                                    borderRadius: BorderRadius.circular(20)),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context).primaryColor),
+                                    borderRadius: BorderRadius.circular(20))),
+                          ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      onChanged: (val) {
+                        setState(() {
+                          groupPurpose = val;
+                        });
+                      },
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontSize: 16,
+                            fontStyle: FontStyle.normal,
+                          ),
+                      maxLines: 4,
+                      maxLength: 200,
+                      decoration: InputDecoration(
+                          hintText: 'Club purpose',
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(20)),
+                          errorBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.red),
+                              borderRadius: BorderRadius.circular(20)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(20))),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      onChanged: (val) {
+                        setState(() {
+                          targetAudience = val;
+                        });
+                      },
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontSize: 16,
+                            fontStyle: FontStyle.normal,
+                          ),
+                      maxLines: 3,
+                      maxLength: 80,
+                      decoration: InputDecoration(
+                          hintText: 'Target audience',
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(20)),
+                          errorBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.red),
+                              borderRadius: BorderRadius.circular(20)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(20))),
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 ElevatedButton(
@@ -371,9 +403,12 @@ class _InstututionalHomeGroupScreenState
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor),
-                  child: Text(
-                    "CANCEL",
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      "CANCEL",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                   ),
                 ),
                 //space
@@ -383,38 +418,35 @@ class _InstututionalHomeGroupScreenState
                 ElevatedButton(
                   onPressed: () async {
                     if (groupName != "" &&
-                        selectedValue != null &&
-                        selectedValue != 'Select School') {
+                        groupPurpose != "" &&
+                        targetAudience != "") {
                       setState(() {
                         _isLoading = true;
                       });
-                      Future<bool> created = DatabaseService(
+
+                      DatabaseServicetest(
                               uid: FirebaseAuth.instance.currentUser!.uid)
                           .createGroup(
                               userName,
                               FirebaseAuth.instance.currentUser!.uid,
                               groupName,
-                              selectedValue!)
+                              groupPurpose,
+                              targetAudience,
+                              isAdmin)
                           .whenComplete(() {
                         _isLoading = false;
                       });
-
-                      if (await created) {
-                        showSnackbar(context, Colors.green,
-                            "Club created successfully.");
-                        Navigator.of(context).pop();
-                      } else {
-                        showSnackbar(context, Colors.red,
-                            "Club creation failed, That institution already has a club.");
-                        Navigator.of(context).pop();
-                      }
+                      Navigator.of(context).pop();
                     }
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor),
-                  child: Text(
-                    "CREATE",
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      "CREATE",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                   ),
                 )
               ],
@@ -429,17 +461,15 @@ class _InstututionalHomeGroupScreenState
       builder: (context, AsyncSnapshot snapshot) {
         // make some checks
         if (snapshot.hasData) {
-          if (snapshot.data['instGroups'] != null) {
-            if (snapshot.data['instGroups'].length != 0) {
+          if (snapshot.data['groups'] != null) {
+            if (snapshot.data['groups'].length != 0) {
               return ListView.builder(
-                itemCount: snapshot.data['instGroups'].length,
+                itemCount: snapshot.data['groups'].length,
                 itemBuilder: (context, index) {
-                  int reverseIndex =
-                      snapshot.data['instGroups'].length - index - 1;
-                  return GroupTile(
-                      groupId: getId(snapshot.data['instGroups'][reverseIndex]),
-                      groupName:
-                          getName(snapshot.data['instGroups'][reverseIndex]),
+                  int reverseIndex = snapshot.data['groups'].length - index - 1;
+                  return GroupTiletest(
+                      groupId: getId(snapshot.data['groups'][reverseIndex]),
+                      groupName: getName(snapshot.data['groups'][reverseIndex]),
                       userName: snapshot.data['name']);
                 },
               );
@@ -480,7 +510,7 @@ class _InstututionalHomeGroupScreenState
             height: 20,
           ),
           const Text(
-            "You've not joined any Institutional clubs, tap on the add icon to create a club",
+            "You've not joined any clubs, tap on the add icon to create a club or also search from top search button.",
             textAlign: TextAlign.center,
           )
         ],

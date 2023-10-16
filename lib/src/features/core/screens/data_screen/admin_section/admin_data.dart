@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:integritylink/src/constants/colors.dart';
 import 'package:integritylink/src/features/core/screens/data_screen/admin_section/data_list_admin.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 
 class AdminDataScreen extends StatefulWidget {

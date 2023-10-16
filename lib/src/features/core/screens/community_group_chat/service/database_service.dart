@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/pages/chat_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/admin/club_list_to_approve.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/pages/chat_page.dart';
 import 'package:integritylink/src/features/core/screens/institutions/inst_model.dart';
 
 class DatabaseService {
@@ -13,6 +14,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection("users");
   final CollectionReference groupCollection =
       FirebaseFirestore.instance.collection("groups");
+  final CollectionReference groupToBeApprovedCollection =
+      FirebaseFirestore.instance.collection("groupstoBeApproved");
 
   final _db = FirebaseFirestore.instance;
 
@@ -40,27 +43,114 @@ class DatabaseService {
   }
 
   // creating a group
-  Future createGroup(String userName, String id, String groupName) async {
+  Future createGroup(String userName, String id, String groupName,
+      String groupPurpose, String targetAudience, bool isAdmin) async {
+    if (isAdmin) {
+      DocumentReference groupDocumentReference = await groupCollection.add({
+        "groupName": groupName,
+        "groupIcon": "",
+        "admin": "${id}_$userName",
+        "createdBy": userName,
+        "members": [],
+        "groupPurpose": groupPurpose,
+        "dateCreated": DateTime.now().toString(),
+        "targetAudience": targetAudience,
+        "approvalStatus": "approved",
+        "approvedBy": userName,
+        "groupId": "",
+        "recentMessage": "",
+        "recentMessageSender": "",
+      });
+      // update the members
+      await groupDocumentReference.update({
+        "members": FieldValue.arrayUnion(["${id}_$userName"]),
+        "groupId": groupDocumentReference.id,
+      });
+
+      DocumentReference userDocumentReference = userCollection.doc(uid);
+      return await userDocumentReference.update({
+        "groups":
+            FieldValue.arrayUnion(["${groupDocumentReference.id}_$groupName"])
+      }).then((value) => {
+            Get.snackbar("Sucess", "Club created successfully",
+                snackPosition: SnackPosition.BOTTOM)
+          });
+    } else {
+      DocumentReference groupDocumentReference =
+          await groupToBeApprovedCollection.add({
+        "groupName": groupName,
+        "groupIcon": "",
+        "admin": "${id}_$userName",
+        "createdBy": userName,
+        "dateCreated": DateTime.now().toString(),
+        "members": [],
+        "approvalStatus": "pending",
+        "approvedBy": "",
+        "groupPurpose": groupPurpose,
+        "targetAudience": targetAudience,
+        "groupId": "",
+        "recentMessage": "",
+        "recentMessageSender": "",
+      });
+      // update the members
+      await groupDocumentReference.update({
+        "members": FieldValue.arrayUnion(["${id}_$userName"]),
+        "groupId": groupDocumentReference.id,
+      }).then((value) => {
+            Get.snackbar(
+                "Sucess",
+                duration: Duration(seconds: 7),
+                "Club submited for approval to admins, Once approved it will be created and visible to all users",
+                snackPosition: SnackPosition.BOTTOM)
+          });
+    }
+  }
+
+  Future approveClub(String docID, String approvedBy) async {
+    QuerySnapshot snapshot = await groupToBeApprovedCollection
+        .where("groupId", isEqualTo: docID)
+        .get();
+
+    DocumentSnapshot documentSnapshot = snapshot.docs[0];
+
     DocumentReference groupDocumentReference = await groupCollection.add({
-      "groupName": groupName,
+      "groupName": documentSnapshot['groupName'],
       "groupIcon": "",
-      "admin": "${id}_$userName",
+      "admin": documentSnapshot['admin'],
+      "createdBy": documentSnapshot['createdBy'],
       "members": [],
+      "groupPurpose": documentSnapshot['groupPurpose'],
+      "dateCreated": DateTime.now().toString(),
+      "targetAudience": documentSnapshot['targetAudience'],
+      "approvalStatus": "approved",
+      "approvedBy": approvedBy,
       "groupId": "",
       "recentMessage": "",
       "recentMessageSender": "",
     });
     // update the members
     await groupDocumentReference.update({
-      "members": FieldValue.arrayUnion(["${id}_$userName"]),
+      "members": FieldValue.arrayUnion([documentSnapshot['admin']]),
       "groupId": groupDocumentReference.id,
     });
 
-    DocumentReference userDocumentReference = userCollection.doc(uid);
-    return await userDocumentReference.update({
-      "groups":
-          FieldValue.arrayUnion(["${groupDocumentReference.id}_$groupName"])
+//String admin id from documentSnapshot['admin']
+    String adminId = documentSnapshot['admin'].split("_")[0];
+
+    DocumentReference userDocumentReference = userCollection.doc(adminId);
+    await userDocumentReference.update({
+      "groups": FieldValue.arrayUnion(
+          ["${groupDocumentReference.id}_${documentSnapshot['groupName']}"])
     });
+
+    //delete the club from pending
+    await groupToBeApprovedCollection.doc(docID).delete().then((value) => {
+          Get.snackbar("Sucess", "Club Approved successfully",
+              snackPosition: SnackPosition.BOTTOM),
+          Get.offAll(
+            () => ClubListScreenForApprove(),
+          )
+        });
   }
 
   // getting the chats

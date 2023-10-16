@@ -1,11 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:integritylink/src/features/core/screens/dashboard/dashboard.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/helper/helper_function.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/pages/search_page.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/service/auth_service.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/service/database_service.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/widgets/group_tile.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/widgets/widgets.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/pages/search_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/service/auth_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/widgets/group_tile.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:integritylink/src/features/core/screens/institutional_group_chat/pages/home_page.dart';
@@ -20,17 +21,38 @@ class CommunityGroupHomePage extends StatefulWidget {
 }
 
 class _CommunityGroupHomePageState extends State<CommunityGroupHomePage> {
+  bool isAdmin = false;
+
   String userName = "";
   String email = "";
   AuthService authService = AuthService();
   Stream? groups;
   bool _isLoading = false;
+
   String groupName = "";
+  String groupPurpose = "";
+  String targetAudience = "";
 
   @override
   void initState() {
     super.initState();
     gettingUserData();
+
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(AuthenticationRepository.instance.firebaseUser.value!.uid)
+        .get()
+        .then((value) {
+      if (value.data()!["level"] == "admin") {
+        setState(() {
+          isAdmin = true;
+        });
+      } else {
+        setState(() {
+          isAdmin = false;
+        });
+      }
+    });
   }
 
   // string manipulation
@@ -266,41 +288,108 @@ class _CommunityGroupHomePageState extends State<CommunityGroupHomePage> {
         builder: (context) {
           return StatefulBuilder(builder: ((context, setState) {
             return AlertDialog(
-              title: const Text(
+              title: Text(
                 "Create a club",
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _isLoading == true
-                      ? Center(
-                          child: CircularProgressIndicator(
-                              color: Theme.of(context).primaryColor),
-                        )
-                      : TextField(
-                          onChanged: (val) {
-                            setState(() {
-                              groupName = val;
-                            });
-                          },
-                          style: Theme.of(context).textTheme.headlineMedium,
-                          decoration: InputDecoration(
-                              hintText: 'Club name',
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Theme.of(context).primaryColor),
-                                  borderRadius: BorderRadius.circular(20)),
-                              errorBorder: OutlineInputBorder(
-                                  borderSide:
-                                      const BorderSide(color: Colors.red),
-                                  borderRadius: BorderRadius.circular(20)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Theme.of(context).primaryColor),
-                                  borderRadius: BorderRadius.circular(20))),
-                        ),
-                ],
+              content: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _isLoading == true
+                        ? Center(
+                            child: CircularProgressIndicator(
+                                color: Theme.of(context).primaryColor),
+                          )
+                        : TextField(
+                            onChanged: (val) {
+                              setState(() {
+                                groupName = val;
+                              });
+                            },
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  fontSize: 16,
+                                  fontStyle: FontStyle.normal,
+                                ),
+                            maxLines: 1,
+                            maxLength: 35,
+                            decoration: InputDecoration(
+                                hintText: 'Club name',
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context).primaryColor),
+                                    borderRadius: BorderRadius.circular(20)),
+                                errorBorder: OutlineInputBorder(
+                                    borderSide:
+                                        const BorderSide(color: Colors.red),
+                                    borderRadius: BorderRadius.circular(20)),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context).primaryColor),
+                                    borderRadius: BorderRadius.circular(20))),
+                          ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      onChanged: (val) {
+                        setState(() {
+                          groupPurpose = val;
+                        });
+                      },
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontSize: 16,
+                            fontStyle: FontStyle.normal,
+                          ),
+                      maxLines: 4,
+                      maxLength: 200,
+                      decoration: InputDecoration(
+                          hintText: 'Club purpose',
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(20)),
+                          errorBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.red),
+                              borderRadius: BorderRadius.circular(20)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(20))),
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      onChanged: (val) {
+                        setState(() {
+                          targetAudience = val;
+                        });
+                      },
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            fontSize: 16,
+                            fontStyle: FontStyle.normal,
+                          ),
+                      maxLines: 3,
+                      maxLength: 80,
+                      decoration: InputDecoration(
+                          hintText: 'Target audience',
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(20)),
+                          errorBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.red),
+                              borderRadius: BorderRadius.circular(20)),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(20))),
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 ElevatedButton(
@@ -309,9 +398,12 @@ class _CommunityGroupHomePageState extends State<CommunityGroupHomePage> {
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor),
-                  child: Text(
-                    "CANCEL",
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      "CANCEL",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                   ),
                 ),
                 //space
@@ -320,27 +412,36 @@ class _CommunityGroupHomePageState extends State<CommunityGroupHomePage> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    if (groupName != "") {
+                    if (groupName != "" &&
+                        groupPurpose != "" &&
+                        targetAudience != "") {
                       setState(() {
                         _isLoading = true;
                       });
+
                       DatabaseService(
                               uid: FirebaseAuth.instance.currentUser!.uid)
-                          .createGroup(userName,
-                              FirebaseAuth.instance.currentUser!.uid, groupName)
+                          .createGroup(
+                              userName,
+                              FirebaseAuth.instance.currentUser!.uid,
+                              groupName,
+                              groupPurpose,
+                              targetAudience,
+                              isAdmin)
                           .whenComplete(() {
                         _isLoading = false;
                       });
                       Navigator.of(context).pop();
-                      showSnackbar(
-                          context, Colors.green, "Group created successfully.");
                     }
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor),
-                  child: Text(
-                    "CREATE",
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      "CREATE",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                   ),
                 )
               ],

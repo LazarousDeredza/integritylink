@@ -1,6 +1,6 @@
-import 'package:integritylink/src/features/core/screens/group_chat/pages/home_page.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/service/auth_service.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/widgets/widgets.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/pages/home_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/service/auth_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 

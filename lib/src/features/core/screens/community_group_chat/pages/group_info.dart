@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/pages/home_page.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/pages/home_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

@@ -1,5 +1,5 @@
-import 'package:integritylink/src/features/core/screens/group_chat/helper/helper_function.dart';
-import 'package:integritylink/src/features/core/screens/group_chat/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
