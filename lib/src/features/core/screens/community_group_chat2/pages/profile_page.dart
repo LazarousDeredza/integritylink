@@ -1,20 +1,20 @@
-import 'package:integritylink/src/features/core/screens/community_group_chat/pages/home_page.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/service/auth_service.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/pages/home_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/service/auth_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/widgets/widgets.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePagetest extends StatefulWidget {
   final String userName;
   final String email;
-  ProfilePage({Key? key, required this.email, required this.userName})
+  ProfilePagetest({Key? key, required this.email, required this.userName})
       : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<ProfilePagetest> createState() => _ProfilePagetestState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePagetestState extends State<ProfilePagetest> {
   AuthService authService = AuthService();
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           ListTile(
             onTap: () {
-              nextScreen(context, const CommunityGroupHomePage());
+              nextScreen(context, const CommunityGroupHomePagetest());
             },
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -78,35 +78,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ListTile(
             onTap: () {
               _showConfirmationBottomSheet(context);
-              // showDialog(
-              //     barrierDismissible: false,
-              //     context: context,
-              //     builder: (context) {
-              //       return AlertDialog(
-              //         title: const Text("Logout"),
-              //         content: const Text("Are you sure you want to logout?"),
-              //         actions: [
-              //           IconButton(
-              //             onPressed: () {
-              //               Navigator.pop(context);
-              //             },
-              //             icon: const Icon(
-              //               Icons.cancel,
-              //               color: Colors.red,
-              //             ),
-              //           ),
-              //           IconButton(
-              //             onPressed: () async {
-
-              //             },
-              //             icon: const Icon(
-              //               Icons.done,
-              //               color: Colors.green,
-              //             ),
-              //           ),
-              //         ],
-              //       );
-              //     });
             },
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),

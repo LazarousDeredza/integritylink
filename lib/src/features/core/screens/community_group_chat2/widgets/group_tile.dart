@@ -1,6 +1,5 @@
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/chat_page.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/pages/chat_page.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/widgets/widgets.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/pages/chat_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class GroupTiletest extends StatefulWidget {

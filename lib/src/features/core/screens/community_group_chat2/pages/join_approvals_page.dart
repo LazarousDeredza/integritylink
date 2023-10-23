@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/chat_page.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/pages/chat_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/service/database_service.dart';
 
 class CommunityClubJoinApprovalScreen extends StatefulWidget {
   final String groupId;

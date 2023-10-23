@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:integritylink/src/features/core/screens/cases/cases_list.dart';
 import 'package:integritylink/src/features/core/screens/cases/report_case.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/home_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/pages/home_page.dart';
 import 'package:integritylink/src/features/core/screens/data_screen/data.dart';
 import 'package:integritylink/src/features/core/screens/education_screens/education_dashboard.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/pages/home_page.dart';
 import 'package:integritylink/src/features/core/screens/institutional_group_chat/pages/home_page.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/screens/chat_home_screen.dart';
 import 'package:integritylink/src/features/core/screens/profile/settings_screen.dart';
@@ -578,6 +577,7 @@ class DevicesGridDashboard extends StatelessWidget {
 //TODO: renlace here
                         Get.to(
                           () => CommunityGroupHomePagetest(),
+                          //  () => CommunityGroupHomePage(),
                         );
                       },
                       child: Padding(

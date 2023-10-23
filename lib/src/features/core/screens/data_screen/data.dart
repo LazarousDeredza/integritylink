@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:integritylink/src/constants/colors.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/helper/helper_function.dart';
 import 'package:integritylink/src/features/core/screens/data_screen/data_list.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 
 class DataScreen extends StatefulWidget {

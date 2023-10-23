@@ -1,26 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/pages/search_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/service/auth_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/widgets/group_tile.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/widgets/widgets.dart';
 import 'package:integritylink/src/features/core/screens/dashboard/dashboard.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/pages/search_page.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/service/auth_service.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/widgets/group_tile.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:integritylink/src/features/core/screens/institutional_group_chat/pages/home_page.dart';
 import 'package:integritylink/src/features/core/screens/profile/update_profile.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 
-class CommunityGroupHomePage extends StatefulWidget {
-  const CommunityGroupHomePage({Key? key}) : super(key: key);
+class CommunityGroupHomePagetest extends StatefulWidget {
+  const CommunityGroupHomePagetest({Key? key}) : super(key: key);
 
   @override
-  State<CommunityGroupHomePage> createState() => _CommunityGroupHomePageState();
+  State<CommunityGroupHomePagetest> createState() =>
+      _CommunityGroupHomePagetestState();
 }
 
-class _CommunityGroupHomePageState extends State<CommunityGroupHomePage> {
+class _CommunityGroupHomePagetestState
+    extends State<CommunityGroupHomePagetest> {
   bool isAdmin = false;
 
   String userName = "";
@@ -78,11 +80,11 @@ class _CommunityGroupHomePageState extends State<CommunityGroupHomePage> {
       });
     });
     // getting the list of snapshots in our stream
-    await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+    await DatabaseServicetest(uid: FirebaseAuth.instance.currentUser!.uid)
         .getUserGroups()
         .then((snapshot) {
       print("Uid >>" + FirebaseAuth.instance.currentUser!.uid);
-      print("snapshop" + snapshot.toString());
+      print("snapshop : " + snapshot.toString());
       setState(() {
         groups = snapshot;
       });
@@ -103,7 +105,7 @@ class _CommunityGroupHomePageState extends State<CommunityGroupHomePage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  nextScreen(context, const SearchPage());
+                  nextScreen(context, const SearchPagetest());
                 },
                 icon: const Icon(
                   Icons.search,
@@ -419,7 +421,7 @@ class _CommunityGroupHomePageState extends State<CommunityGroupHomePage> {
                         _isLoading = true;
                       });
 
-                      DatabaseService(
+                      DatabaseServicetest(
                               uid: FirebaseAuth.instance.currentUser!.uid)
                           .createGroup(
                               userName,
@@ -462,7 +464,7 @@ class _CommunityGroupHomePageState extends State<CommunityGroupHomePage> {
                 itemCount: snapshot.data['groups'].length,
                 itemBuilder: (context, index) {
                   int reverseIndex = snapshot.data['groups'].length - index - 1;
-                  return GroupTile(
+                  return GroupTiletest(
                       groupId: getId(snapshot.data['groups'][reverseIndex]),
                       groupName: getName(snapshot.data['groups'][reverseIndex]),
                       userName: snapshot.data['name']);

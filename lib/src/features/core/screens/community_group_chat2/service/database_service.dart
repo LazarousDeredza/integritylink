@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/chat_page.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/admin/club_list_to_approve.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/pages/chat_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/admin/club_list_to_approve.dart';
 import 'package:integritylink/src/features/core/screens/institutions/inst_model.dart';
 
 class DatabaseServicetest {
@@ -14,7 +12,7 @@ class DatabaseServicetest {
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection("users");
   final CollectionReference groupCollection =
-      FirebaseFirestore.instance.collection("groups1");
+      FirebaseFirestore.instance.collection("groups");
   final CollectionReference groupToBeApprovedCollection =
       FirebaseFirestore.instance.collection("groupstoBeApproved");
 

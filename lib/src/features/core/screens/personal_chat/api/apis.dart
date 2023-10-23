@@ -9,8 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/home_page.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/helper/helper_function.dart';
 
 import '../models/chat_user.dart';
 import '../models/message.dart';

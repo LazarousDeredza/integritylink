@@ -9,11 +9,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:integritylink/main.dart';
 import 'package:integritylink/src/constants/colors.dart';
 import 'package:integritylink/src/constants/image_strings.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/chat_page.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/group_delete_confirmation.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/service/database_service.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/pages/home_page.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/pages/chat_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/pages/group_delete_confirmation.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/pages/home_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/api/apis.dart';
@@ -62,12 +61,15 @@ class _GroupInfotestState extends State<GroupInfotest> {
   }
 
   Future<void> fetchGroupDetails() async {
+    print("Group Id : " + widget.groupId);
     // Assuming you have the group ID stored in widget.groupId
     final DocumentSnapshot<Map<String, dynamic>> snapshot =
         await FirebaseFirestore.instance
-            .collection('groups1')
+            .collection('groups')
             .doc(widget.groupId)
             .get();
+
+    print("Club exists : " + snapshot.exists.toString());
 
     if (snapshot.exists) {
       final groupData = snapshot.data();
@@ -184,7 +186,7 @@ class _GroupInfotestState extends State<GroupInfotest> {
                                   Get.snackbar("Club left sucessful", "",
                                       snackPosition: SnackPosition.BOTTOM);
                                   Get.offAll(
-                                    () => CommunityGroupHomePage(),
+                                    () => CommunityGroupHomePagetest(),
                                   );
                                 }).onError((error, stackTrace) => () {
                                           Get.snackbar("Error",

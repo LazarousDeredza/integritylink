@@ -3,28 +3,28 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:integritylink/src/constants/colors.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/controller/community_group_controller.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/controller/community_group_controller.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/helper/helper_function.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/service/database_service.dart';
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+class SearchPagetest extends StatefulWidget {
+  const SearchPagetest({Key? key}) : super(key: key);
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<SearchPagetest> createState() => _SearchPagetestState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPagetestState extends State<SearchPagetest> {
   TextEditingController searchController = TextEditingController();
 
-  final controller = Get.put(CommunityController());
+  final controller = Get.put(CommunityControllertest());
 
   bool isLoading = false;
   bool isListFetched = false;
   QuerySnapshot? searchSnapshot;
   bool hasUserSearched = false;
   String userName = "";
-  bool isJoined = false;
+  late bool isJoined = false;
   User? user;
 
   @override
@@ -59,7 +59,7 @@ class _SearchPageState extends State<SearchPage> {
         elevation: 0,
         backgroundColor: Theme.of(context).primaryColor,
         title: const Text(
-          "Search",
+          "Search ",
           style: TextStyle(
               fontSize: 27, fontWeight: FontWeight.bold, color: Colors.white),
         ),
@@ -142,7 +142,7 @@ class _SearchPageState extends State<SearchPage> {
       setState(() {
         isLoading = true;
       });
-      await DatabaseService()
+      await DatabaseServicetest()
           .searchByName(searchController.text.trim())
           .then((snapshot) {
         setState(() {
@@ -158,7 +158,7 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       isLoading = true;
     });
-    await DatabaseService().listOfGrps().then((snapshot) {
+    await DatabaseServicetest().listOfGrps().then((snapshot) {
       //searchSnapshot = snapshot;
       setState(() {
         searchSnapshot = snapshot;
@@ -214,7 +214,7 @@ class _SearchPageState extends State<SearchPage> {
 
   joinedOrNot(
       String userName, String groupId, String groupname, String admin) async {
-    await DatabaseService(uid: user!.uid)
+    await DatabaseServicetest(uid: user!.uid)
         .isUserJoined(groupname, groupId, userName)
         .then((value) {
       setState(() {
@@ -227,7 +227,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget groupTile(
       String userName, String groupId, String groupName, String admin) {
     // function to check whether user already exists in group
-    joinedOrNot(userName, groupId, groupName, admin);
+    //joinedOrNot(userName, groupId, groupName, admin);
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       leading: CircleAvatar(
@@ -243,38 +243,21 @@ class _SearchPageState extends State<SearchPage> {
       subtitle: Text("Admin: ${getName(admin)}"),
       trailing: InkWell(
         onTap: () async {
-          await DatabaseService(uid: user!.uid)
+          await DatabaseServicetest(uid: user!.uid)
               .toggleGroupJoin(groupId, userName, groupName);
-          if (isJoined) {
-            setState(() {
-              isJoined = !isJoined;
-            });
-          }
         },
-        child: isJoined
-            ? Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Theme.of(context).primaryColor,
-                  border: Border.all(color: Colors.white, width: 1),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: const Text(
-                  "Join Now",
-                  style: TextStyle(color: Colors.white),
-                ),
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Theme.of(context).primaryColor,
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: const Text("Join Now",
-                    style: TextStyle(color: Colors.white)),
-              ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Theme.of(context).primaryColor,
+            border: Border.all(color: Colors.white, width: 1),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: const Text(
+            "Join Now",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
       ),
     );
   }

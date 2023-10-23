@@ -1,6 +1,6 @@
-import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/helper/helper_function.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:integritylink/src/features/core/screens/institutional_group_chat/service/database_service.dart';
 
 class AuthService {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;

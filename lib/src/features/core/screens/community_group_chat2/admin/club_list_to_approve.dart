@@ -2,11 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:integritylink/src/features/core/screens/cases/report_case.dart';
-import 'package:integritylink/src/features/core/screens/cases/view_case.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/admin/club_view.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
-import 'package:integritylink/src/features/core/screens/institutional_group_chat/widgets/widgets.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/admin/club_view.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/service/database_service.dart';
 import 'package:integritylink/src/features/core/screens/profile/settings_screen.dart';
 
 class ClubListScreenForApprove extends StatefulWidget {
@@ -402,7 +399,7 @@ class _ClubListScreenForApproveState extends State<ClubListScreenForApprove> {
                       _isLoading = true;
                     });
 
-                    await DatabaseService()
+                    await DatabaseServicetest()
                         .approveClub(docId, userId.toString());
 
                     setState(() {

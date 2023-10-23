@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/group_info.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/home_page.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/pages/group_info.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/pages/group_info.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/pages/home_page.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/api/apis.dart';
 
 class GroupDeleteConfirmationPage extends StatelessWidget {

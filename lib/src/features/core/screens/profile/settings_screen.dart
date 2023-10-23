@@ -7,7 +7,7 @@ import 'package:integritylink/src/constants/sizes.dart';
 import 'package:integritylink/src/constants/text_strings.dart';
 import 'package:integritylink/src/features/core/screens/about/about_screen.dart';
 import 'package:integritylink/src/features/core/screens/cases/admin/admin_cases_list.dart';
-import 'package:integritylink/src/features/core/screens/community_group_chat/admin/club_list_to_approve.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat2/admin/club_list_to_approve.dart';
 import 'package:integritylink/src/features/core/screens/dashboard/dashboard.dart';
 import 'package:integritylink/src/features/core/screens/data_screen/admin_section/admin_data.dart';
 import 'package:integritylink/src/features/core/screens/education_screens/articles/admin/article_list_admin.dart';
