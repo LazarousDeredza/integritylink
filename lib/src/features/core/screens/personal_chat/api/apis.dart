@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/home_page.dart';
 import 'package:integritylink/src/features/core/screens/community_group_chat/helper/helper_function.dart';
 
 import '../models/chat_user.dart';
@@ -517,23 +518,32 @@ class APIs {
   }
 
   static Future<void> deleteGroup(String groupId, String groupName) async {
-    await firestore.collection('groups1').doc(groupId).delete();
     await firestore
         .collection('users')
         .where('groups', arrayContains: groupId + "_" + groupName)
         .get()
-        .then((value) => value.docs.forEach((element) {
-              firestore.collection('users').doc(element.id).update({
-                'groups': FieldValue.arrayRemove([groupId + "_" + groupName])
-              });
-            }));
+        .then(
+          (value) => value.docs.forEach(
+            (element) {
+              print(" Element ID  " + element.id);
+              if (element.data().containsKey('groups')) {
+                firestore.collection('users').doc(element.id).update({
+                  'groups': FieldValue.arrayRemove([groupId + "_" + groupName])
+                });
+              }
+            },
+          ),
+        );
 
-    //toast
+    await firestore.collection('groups1').doc(groupId).delete();
     Get.snackbar(
       "Success",
       "Club Deleted",
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.green,
     );
+    print("Done removing all users");
+
+    //toast
   }
 }

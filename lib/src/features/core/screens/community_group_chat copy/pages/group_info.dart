@@ -10,6 +10,7 @@ import 'package:integritylink/main.dart';
 import 'package:integritylink/src/constants/colors.dart';
 import 'package:integritylink/src/constants/image_strings.dart';
 import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/chat_page.dart';
+import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/pages/group_delete_confirmation.dart';
 import 'package:integritylink/src/features/core/screens/community_group_chat%20copy/service/database_service.dart';
 import 'package:integritylink/src/features/core/screens/community_group_chat/pages/home_page.dart';
 import 'package:integritylink/src/features/core/screens/community_group_chat/service/database_service.dart';
@@ -135,33 +136,15 @@ class _GroupInfotestState extends State<GroupInfotest> {
                 ? IconButton(
                     onPressed: () {
                       //confirm delete group
-
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text("Delete Club"),
-                              content: const Text(
-                                  "Are you sure you want to delete this club?"),
-                              actions: [
-                                ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text("Cancel")),
-                                ElevatedButton(
-                                    onPressed: () async {
-                                      await APIs.deleteGroup(
-                                          widget.groupId, widget.groupName);
-                                      Navigator.pop(context);
-                                      Get.offAll(
-                                        () => CommunityGroupHomePage(),
-                                      );
-                                    },
-                                    child: const Text("Delete")),
-                              ],
-                            );
-                          });
+                      Get.offAll(
+                        () => GroupDeleteConfirmationPage(
+                          groupId: widget.groupId,
+                          groupName: widget.groupName,
+                          adminName: widget.adminName,
+                          username: widget.username,
+                        ),
+                        // CommunityGroupHomePage(),
+                      );
                     },
                     icon: Icon(
                       Icons.delete,
@@ -517,6 +500,9 @@ class _GroupInfotestState extends State<GroupInfotest> {
     return StreamBuilder(
       stream: members,
       builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return Text('Group deleted');
+        }
         if (snapshot.hasData) {
           if (snapshot.data['members'] != null) {
             if (snapshot.data['members'].length != 0) {
