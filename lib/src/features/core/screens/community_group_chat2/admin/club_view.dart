@@ -215,7 +215,7 @@ class _ClubViewScreenState extends State<ClubViewScreen> {
                             ),
                             child: Text(
                               "Approve",
-                              style: Theme.of(context).textTheme.button,
+                              style: Theme.of(context).textTheme.labelLarge,
                             ),
                           ),
                         ),
@@ -311,7 +311,7 @@ class _ClubViewScreenState extends State<ClubViewScreen> {
                             ),
                             child: Text(
                               "Delete",
-                              style: Theme.of(context).textTheme.button,
+                              style: Theme.of(context).textTheme.labelLarge,
                             ),
                           ),
                         ),
@@ -376,6 +376,13 @@ class _ClubViewScreenState extends State<ClubViewScreen> {
 
                     await DatabaseServicetest()
                         .approveClub(widget.docID, userId.toString());
+                    Get.snackbar("Sucess", "Club Approved successfully",
+                        snackPosition: SnackPosition.BOTTOM);
+                    //delay 3 seconds
+                    await Future.delayed(Duration(seconds: 2));
+                    Get.offAll(
+                      () => ClubListScreenForApprove(),
+                    );
                     // Navigator.of(context).pop();
                     // setState(() {
                     //   _isLoading = false;

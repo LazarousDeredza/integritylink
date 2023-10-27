@@ -12,7 +12,9 @@ import 'package:integritylink/src/features/core/screens/dashboard/dashboard.dart
 import 'package:integritylink/src/features/core/screens/data_screen/admin_section/admin_data.dart';
 import 'package:integritylink/src/features/core/screens/education_screens/articles/admin/article_list_admin.dart';
 import 'package:integritylink/src/features/core/screens/institutions/Institutions_list_home.dart';
+import 'package:integritylink/src/features/core/screens/profile/Feedbacks.dart';
 import 'package:integritylink/src/features/core/screens/profile/admins.dart';
+import 'package:integritylink/src/features/core/screens/profile/feebback.dart';
 import 'package:integritylink/src/features/core/screens/profile/update_profile.dart';
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:integritylink/src/utils/theme/theme.dart';
@@ -194,6 +196,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Get.to(() => AboutScreen());
                     },
                   ),
+                  ProfileMenuWidget(
+                    title: "Feedback",
+                    icon: LineAwesomeIcons.heart,
+                    onPress: () {
+                      Get.to(() => FeedbackScreen());
+                    },
+                  ),
                   if (email == "ninja.ld49@gmail.com" ||
                       email == "pamodzichildafrica@gmail.com" ||
                       email == "info@yc4integritybuilding.org" ||
@@ -308,6 +317,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       icon: LineAwesomeIcons.users,
                       onPress: () {
                         Get.to(() => UsersScreen());
+                      },
+                    ),
+                  if (email == "ninja.ld49@gmail.com" ||
+                      email == "pamodzichildafrica@gmail.com" ||
+                      email == "info@yc4integritybuilding.org" ||
+                      email == "damarisaswa12@gmail.com" ||
+                      email == "ken@yc4integritybuilding.org" ||
+                      isAdmin)
+                    ProfileMenuWidget(
+                      title: "User Feebacks",
+                      icon: LineAwesomeIcons.heart,
+                      onPress: () {
+                        Get.to(() => FeedbackListScreen());
                       },
                     ),
                   const SizedBox(height: 10),

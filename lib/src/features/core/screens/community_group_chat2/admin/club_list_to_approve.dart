@@ -406,7 +406,15 @@ class _ClubListScreenForApproveState extends State<ClubListScreenForApprove> {
                       _isLoading = false;
                     });
 
-                    Navigator.of(context).pop();
+                    Get.snackbar("Sucess", "Club Approved successfully",
+                        snackPosition: SnackPosition.BOTTOM);
+                    //delay 3 seconds
+                    await Future.delayed(Duration(seconds: 2));
+                    Get.offAll(
+                      () => ClubListScreenForApprove(),
+                    );
+
+                    //  Navigator.of(context).pop();
                     // showSnackbar(
                     //     context, Colors.green, "Club Approved successfully.");
                   },

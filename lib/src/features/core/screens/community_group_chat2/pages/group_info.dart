@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:integritylink/main.dart';
@@ -278,7 +277,7 @@ class _GroupInfotestState extends State<GroupInfotest> {
                     "${widget.groupName}",
                     textAlign: TextAlign.center,
                     maxLines: null,
-                    style: Theme.of(context).textTheme.headline4,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   //icon edit club name
                   if (isAdmin)

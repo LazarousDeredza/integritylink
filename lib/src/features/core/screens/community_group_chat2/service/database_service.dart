@@ -110,7 +110,7 @@ class DatabaseServicetest {
     }
   }
 
-  Future approveClub(String docID, String approvedBy) async {
+  Future<void> approveClub(String docID, String approvedBy) async {
     QuerySnapshot snapshot = await groupToBeApprovedCollection
         .where("groupId", isEqualTo: docID)
         .get();
@@ -149,13 +149,7 @@ class DatabaseServicetest {
     });
 
     //delete the club from pending
-    await groupToBeApprovedCollection.doc(docID).delete().then((value) => {
-          Get.snackbar("Sucess", "Club Approved successfully",
-              snackPosition: SnackPosition.BOTTOM),
-          Get.offAll(
-            () => ClubListScreenForApprove(),
-          )
-        });
+    await groupToBeApprovedCollection.doc(docID).delete();
   }
 
   // getting the chats

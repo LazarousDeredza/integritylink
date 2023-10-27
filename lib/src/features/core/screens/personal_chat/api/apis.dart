@@ -303,7 +303,7 @@ class APIs {
     //updating image in firestore database
     me.image = await ref.getDownloadURL();
     await firestore
-        .collection('groups1')
+        .collection('groups')
         .doc(groupID)
         .update({'groupIcon': me.image})
         .then((value) => () {
@@ -452,7 +452,7 @@ class APIs {
   static Future<void> updateGroupPurpose(
       String groupPurpose, String groupId) async {
     await firestore
-        .collection('groups1')
+        .collection('groups')
         .doc(groupId)
         .update({'groupPurpose': groupPurpose}).then((value) => () {
               //show snackbar
@@ -470,7 +470,7 @@ class APIs {
     //print group id
     print("Group id for group name change : " + groupId);
     await firestore
-        .collection('groups1')
+        .collection('groups')
         .doc(groupId)
         .update({'groupName': groupName}).then((value) => () {
               print("Group name updated");
@@ -501,7 +501,7 @@ class APIs {
   static removeMember(String groupId, data, String groupName) async {
     String userId = data.substring(0, data.indexOf("_"));
     print(" User Id = " + userId);
-    await firestore.collection('groups1').doc(groupId).update({
+    await firestore.collection('groups').doc(groupId).update({
       'members': FieldValue.arrayRemove([data])
     });
     await firestore.collection('users').doc(userId).update({
@@ -534,7 +534,7 @@ class APIs {
           ),
         );
 
-    await firestore.collection('groups1').doc(groupId).delete();
+    await firestore.collection('groups').doc(groupId).delete();
     Get.snackbar(
       "Success",
       "Club Deleted",
