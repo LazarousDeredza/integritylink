@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ import 'package:integritylink/src/features/authentication/models/user_model.dart
 import 'package:integritylink/src/features/core/controllers/profile_controller.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/models/chat_user.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/screens/chat_screen.dart';
+import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 
 class ChatUsersScreen extends StatefulWidget {
   @override
@@ -17,6 +19,7 @@ class ChatUsersScreen extends StatefulWidget {
 
 class _ChatUsersScreenState extends State<ChatUsersScreen> {
   final controller = Get.put(ProfileController());
+  bool isAdmin = false;
   List<UserModel> allUsers = [];
   List<UserModel> filteredUsers = [];
 
@@ -24,6 +27,22 @@ class _ChatUsersScreenState extends State<ChatUsersScreen> {
   void initState() {
     super.initState();
     loadUsers();
+
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(AuthenticationRepository.instance.firebaseUser.value!.uid)
+        .get()
+        .then((value) {
+      if (value.data()!["level"] == "admin") {
+        setState(() {
+          isAdmin = true;
+        });
+      } else {
+        setState(() {
+          isAdmin = false;
+        });
+      }
+    });
   }
 
   Future<void> loadUsers() async {
@@ -198,25 +217,27 @@ class _ChatUsersScreenState extends State<ChatUsersScreen> {
                               userData.email,
                             );
                           }),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                userData.email,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                userData.phoneNo != "null"
-                                    ? userData.phoneNo
-                                    : "",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
+                          child: isAdmin
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      userData.email,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      userData.phoneNo != "null"
+                                          ? userData.phoneNo
+                                          : "",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Container(),
                         ),
                         trailing: IconButton(
                           icon: Icon(
