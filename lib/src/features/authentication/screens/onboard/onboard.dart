@@ -20,7 +20,7 @@ class _OnBoardState extends State<OnBoard> {
   List<OnboardModel> screens = <OnboardModel>[
     OnboardModel(
       img: 'assets/images/img-1.png',
-      text: "Welcome to IntegrityLink",
+      text: "Welcome to IntegrityLink-Tuwajibike!",
       desc:
           "Connect with your community, share issues, and stand against corruption. Together, we can make a difference.",
       bg: Colors.white,

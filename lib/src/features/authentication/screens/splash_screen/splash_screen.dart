@@ -68,7 +68,7 @@ class SplashScreen extends StatelessWidget {
               ),
               child: Image(
                 width: mq.width,
-                image: AssetImage(tSplashImage),
+                image: AssetImage(tSplashImage2),
               ),
             ),
             TFadeInAnimation(

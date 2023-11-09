@@ -80,7 +80,7 @@ class Dashboard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        "IntegrityLink",
+                        "IntegrityLink-Tuwajibike!",
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,

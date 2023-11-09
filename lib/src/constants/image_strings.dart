@@ -1,6 +1,6 @@
 const String tSplashTopIcon = 'assets/images/integrity_link_logo2.png';
 const String tSplashImage = 'assets/images/integrity_link_logo3.png';
-
+const String tSplashImage2 = 'assets/images/icon1.png';
 //onboarding screen images
 
 const String tOnboardingImage1 =
