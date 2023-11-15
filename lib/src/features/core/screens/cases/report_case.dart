@@ -185,7 +185,26 @@ class _ReportCorruptionScreenState extends State<ReportCorruptionScreen> {
                           LinearProgressIndicator(),
                         ],
                       ),
+                    SizedBox(height: 16.0),
+                    Card(
+                      shape: RoundedRectangleBorder(),
+                      color: Colors.yellow.shade100,
+                      child: Text(
+                        "Your report is kept anonymous",
+                        maxLines: 1,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              fontSize: 20.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ),
 
+                    Divider(
+                      thickness: .9,
+                      color: Colors.grey,
+                    ),
                     SizedBox(height: 20.0),
                     TextFormField(
                       controller: _locationController,

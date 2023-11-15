@@ -611,10 +611,10 @@ class DevicesGridDashboard extends StatelessWidget {
                     Icons.photo_album,
                     color: Colors.white,
                   ),
-                  'Public Debt',
-                  'Reports', () {
+                  'Gazette',
+                  'Notices', () {
                 Get.to(() => DataListScreen(
-                      dataType: "Public Debt Reports",
+                      dataType: "Gazette Notices",
                     ));
               }),
             ],
