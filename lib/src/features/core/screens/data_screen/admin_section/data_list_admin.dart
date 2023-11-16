@@ -99,6 +99,7 @@ class _AdminDataListScreenState extends State<AdminDataListScreen> {
   @override
   void initState() {
     super.initState();
+    print(typeOfDocument);
 
     //get current logged in user level
     var level = FirebaseFirestore.instance

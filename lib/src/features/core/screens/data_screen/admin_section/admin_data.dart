@@ -255,7 +255,7 @@ class _AdminDataScreenState extends State<AdminDataScreen> {
                       Navigator.pop(context);
                       // Get.to(() => InstututionalHomeGroupScreen());
                       Get.to(() => AdminDataListScreen(
-                            dataType: "Public Debt Reports",
+                            dataType: "Gazzete Notices",
                           ));
                     },
                     selectedColor: Theme.of(context).primaryColor,
@@ -267,29 +267,7 @@ class _AdminDataScreenState extends State<AdminDataScreen> {
                       color: Colors.blueAccent,
                     ),
                     title: Text(
-                      "Public Debt Reports",
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  ),
-                  ListTile(
-                    onTap: () {
-                      //close drawer
-                      Navigator.pop(context);
-                      // Get.to(() => InstututionalHomeGroupScreen());
-                      Get.to(() => AdminDataListScreen(
-                            dataType: "Government Transparency",
-                          ));
-                    },
-                    selectedColor: Theme.of(context).primaryColor,
-                    selected: true,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    leading: const Icon(
-                      Icons.public,
-                      color: Colors.blueAccent,
-                    ),
-                    title: Text(
-                      "Government Transparency",
+                      "Gazzete Notices",
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
@@ -611,10 +589,10 @@ class DevicesGridDashboard extends StatelessWidget {
                     Icons.photo_album,
                     color: Colors.white,
                   ),
-                  'Public Debt',
-                  'Reports', () {
+                  'Gazette',
+                  'Notices', () {
                 Get.to(() => AdminDataListScreen(
-                      dataType: "Public Debt Reports",
+                      dataType: "Gazette Notices",
                     ));
               }),
             ],

@@ -255,7 +255,7 @@ class _DataScreenState extends State<DataScreen> {
                       Navigator.pop(context);
                       // Get.to(() => InstututionalHomeGroupScreen());
                       Get.to(() => DataListScreen(
-                            dataType: "Public Debt Reports",
+                            dataType: "Gazette Notices",
                           ));
                     },
                     selectedColor: Theme.of(context).primaryColor,
@@ -267,29 +267,7 @@ class _DataScreenState extends State<DataScreen> {
                       color: Colors.blueAccent,
                     ),
                     title: Text(
-                      "Public Debt Reports",
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  ),
-                  ListTile(
-                    onTap: () {
-                      //close drawer
-                      Navigator.pop(context);
-                      // Get.to(() => InstututionalHomeGroupScreen());
-                      Get.to(() => DataListScreen(
-                            dataType: "Government Transparency",
-                          ));
-                    },
-                    selectedColor: Theme.of(context).primaryColor,
-                    selected: true,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    leading: const Icon(
-                      Icons.public,
-                      color: Colors.blueAccent,
-                    ),
-                    title: Text(
-                      "Government Transparency",
+                      "Gazette Notices",
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
