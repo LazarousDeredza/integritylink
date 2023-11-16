@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="IntergrityLink-Tuwajibike!"
+        android:label="IntegrityLink-Tuwajibike!"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
