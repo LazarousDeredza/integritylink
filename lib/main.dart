@@ -10,6 +10,7 @@ import 'package:integritylink/src/features/authentication/screens/onboard/onboar
 import 'package:integritylink/src/repository/authentication_repository/authentication_repository.dart';
 import 'package:integritylink/src/utils/theme/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:upgrader/upgrader.dart';
 
 int? isviewed;
 late Size mq;
@@ -19,6 +20,7 @@ void main() async {
     statusBarColor: Colors.transparent,
   ));
   WidgetsFlutterBinding.ensureInitialized();
+  await Upgrader.clearSavedSettings();
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   isviewed = prefs.getInt('onBoard');

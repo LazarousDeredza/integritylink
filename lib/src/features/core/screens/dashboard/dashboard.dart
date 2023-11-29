@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:integritylink/src/features/core/screens/cases/cases_list.dart';
@@ -8,6 +10,7 @@ import 'package:integritylink/src/features/core/screens/education_screens/educat
 import 'package:integritylink/src/features/core/screens/institutional_group_chat/pages/home_page.dart';
 import 'package:integritylink/src/features/core/screens/personal_chat/screens/chat_home_screen.dart';
 import 'package:integritylink/src/features/core/screens/profile/settings_screen.dart';
+import 'package:upgrader/upgrader.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../repository/authentication_repository/authentication_repository.dart';
@@ -64,156 +67,167 @@ class Dashboard extends StatelessWidget {
         //     }
         //   },
         // ),
-        body: Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: size.height * .35,
-                  width: size.width,
-                ),
-                GradientContainer(size),
-                Positioned(
-                  top: size.height * .06,
-                  left: 30,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "IntegrityLink-Tuwajibike!",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(top: 10, bottom: 5),
-                        child: Text(
-                          "keep the public sector honest",
-                          style: TextStyle(
-                            color: Colors.blueAccent,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 15),
-                            child: GestureDetector(
-                              // onTap: () => Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => Rooms(),
-                              //   ),
-                              // ),
-                              child: Container(
-                                height: size.height * .15,
-                                width: size.width * .4,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(8),
-                                  image: const DecorationImage(
-                                    image: AssetImage(
-                                      "assets/bg.jpg",
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.black.withOpacity(0.3),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 15,
-                                      top: size.height * .12,
-                                    ),
-                                    child: const Text(
-                                      'Stay',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 15),
-                            child: GestureDetector(
-                              // onTap: () => Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => Rooms(),
-                              //   ),
-                              // ),
-                              child: Container(
-                                height: size.height * .15,
-                                width: size.width * .4,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(8),
-                                  image: const DecorationImage(
-                                    image: AssetImage(
-                                      "assets/bg.jpg",
-                                    ),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: Colors.black.withOpacity(0.3),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      left: 15,
-                                      top: size.height * .12,
-                                    ),
-                                    child: const Text(
-                                      'Connected',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+        body: UpgradeAlert(
+          upgrader: Upgrader(
+            durationUntilAlertAgain: Duration(days: 1),
+            dialogStyle: Platform.isIOS
+                ? UpgradeDialogStyle.cupertino
+                : UpgradeDialogStyle.material,
+            canDismissDialog: true,
+            shouldPopScope: () => true,
+            debugLogging: true,
+          ),
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    height: size.height * .35,
+                    width: size.width,
                   ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DevicesGridDashboard(size: size),
-                      ScenesDashboard(),
-                    ],
+                  GradientContainer(size),
+                  Positioned(
+                    top: size.height * .06,
+                    left: 30,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "IntegrityLink-Tuwajibike!",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 5),
+                          child: Text(
+                            "keep the public sector honest",
+                            style: TextStyle(
+                              color: Colors.blueAccent,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 15),
+                              child: GestureDetector(
+                                // onTap: () => Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => Rooms(),
+                                //   ),
+                                // ),
+                                child: Container(
+                                  height: size.height * .15,
+                                  width: size.width * .4,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(8),
+                                    image: const DecorationImage(
+                                      image: AssetImage(
+                                        "assets/bg.jpg",
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Colors.black.withOpacity(0.3),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 15,
+                                        top: size.height * .12,
+                                      ),
+                                      child: const Text(
+                                        'Stay',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 15),
+                              child: GestureDetector(
+                                // onTap: () => Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => Rooms(),
+                                //   ),
+                                // ),
+                                child: Container(
+                                  height: size.height * .15,
+                                  width: size.width * .4,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(8),
+                                    image: const DecorationImage(
+                                      image: AssetImage(
+                                        "assets/bg.jpg",
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: Colors.black.withOpacity(0.3),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 15,
+                                        top: size.height * .12,
+                                      ),
+                                      child: const Text(
+                                        'Connected',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DevicesGridDashboard(size: size),
+                        ScenesDashboard(),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     });
